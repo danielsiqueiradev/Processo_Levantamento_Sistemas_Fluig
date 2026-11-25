@@ -128,7 +128,7 @@ function validateForm(form) {
                 } else if (tipo == "web" && !isEmpty(url) && !urlValida(url)) {
                     errors.push(
                         "Sistema " + linha +
-                        " — URL inválida: use o formato www.sistema.com ou www.sistema.com.br"
+                        " — URL inválida: informe um link válido (ex.: www.sistema.com.br)"
                     );
                 }
 
@@ -238,10 +238,12 @@ function isEmpty(valor) {
         String(valor).replace(/^\s+|\s+$/g, "") == "";
 }
 
-// Exige www.algumacoisa.com ou .com.br (protocolo opcional).
+// Link válido: domínio estruturado (host.tld) ou IP — protocolo, www,
+// porta e caminho opcionais. Qualquer TLD serve.
 function urlValida(u) {
-    return /^(https?:\/\/)?www\.[\w-]+(\.[\w-]+)*\.(com\.br|com)(\/\S*)?$/i
-        .test(String(u));
+    u = String(u);
+    return /^(https?:\/\/)?(www\.)?[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/i.test(u)
+        || /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/\S*)?$/i.test(u);
 }
 
 // dd/mm/aaaa com data de verdade — rejeita 30/02, 31/04 etc.

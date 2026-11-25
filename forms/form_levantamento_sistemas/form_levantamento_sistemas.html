@@ -23,6 +23,9 @@
         .erro-campo-msg { color: #d9534f; font-size: 12px; display: block; margin-top: 4px; }
         .ajuda-modal-central.aberto { display: flex !important; align-items: center; justify-content: center; }
         .ajuda-cab-erro { background-color: #d9534f !important; }
+        .ajuda-btn-cinza { background: #6c757d !important; margin-left: 8px; }
+        .ajuda-btn-cinza:hover { background: #5a6268 !important; }
+        .destino-bloqueado { opacity: .45 !important; cursor: not-allowed !important; }
         .tabela-sistemas { width: 100%; }
         .tabela-sistemas > tbody > tr > td { vertical-align: top; }
         .sistema-card { padding: 16px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
@@ -472,13 +475,46 @@
             if ($tr.length) atualizarLinha($tr[0]);
         }
 
+        // Confirmação de remoção em modal próprio (centralizado, igual aos
+        // outros diálogos do form) — o confirm() nativo aparece no topo.
+        var __confirmarCb = null;
+        function confirmarAcao(texto, cb) {
+            $("#textoConfirmar").text(texto);
+            __confirmarCb = cb;
+            var m = document.getElementById("modalConfirmar");
+            if (m.className.indexOf("aberto") === -1) {
+                m.className += " aberto";
+                document.body.className += " modal-aberto-trava";
+                var bd = document.createElement("div");
+                bd.className = "ajuda-backdrop";
+                bd.id = "backdropConfirmar";
+                bd.onclick = fecharModalConfirmar;
+                document.body.appendChild(bd);
+            }
+        }
+        function fecharModalConfirmar() {
+            var m = document.getElementById("modalConfirmar");
+            m.className = m.className.replace(" aberto", "");
+            document.body.className =
+                document.body.className.replace(" modal-aberto-trava", "");
+            var bd = document.getElementById("backdropConfirmar");
+            if (bd) bd.parentNode.removeChild(bd);
+            __confirmarCb = null;
+        }
+        function confirmarAcaoSim() {
+            var cb = __confirmarCb;
+            fecharModalConfirmar();
+            if (cb) cb();
+        }
+
         function removerSistema(botao) {
-            if (!confirm("Deseja remover este sistema do levantamento?")) return;
-            $(botao).closest("tr").remove();
-            atualizarResumo();
-            serializarSistemas();
-            atualizarBotoesRemover();
-            $("#semSistemas").toggle(linhasIndexadas().length === 0);
+            confirmarAcao("Deseja remover este sistema do levantamento?", function () {
+                $(botao).closest("tr").remove();
+                atualizarResumo();
+                serializarSistemas();
+                atualizarBotoesRemover();
+                $("#semSistemas").toggle(linhasIndexadas().length === 0);
+            });
         }
 
         // Serialização final síncrona antes do envio — garante o último estado
@@ -497,8 +533,12 @@
 
         // Validação client-side das novas regras — feedback instantâneo;
         // o validateForm do servidor faz a checagem definitiva.
+        // URL válida = domínio estruturado (host.tld) ou IP, com protocolo,
+        // www, porta e caminho opcionais. Qualquer TLD serve — não precisa
+        // ser .com/.com.br.
         function urlValida(u) {
-            return /^(https?:\/\/)?www\.[\w-]+(\.[\w-]+)*\.(com\.br|com)(\/\S*)?$/i.test(u);
+            return /^(https?:\/\/)?(www\.)?[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/i.test(u)
+                || /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/\S*)?$/i.test(u);
         }
 
         function dataContratacaoValida(s) {
@@ -546,7 +586,7 @@
                     var $url = $l.find("[name^='urlSistema']");
                     var url = $.trim($url.val() || "");
                     if (tipo === "web" && url !== "" && !urlValida(url)) {
-                        erros.push("Sistema " + n + ": URL inválida — use o formato www.sistema.com ou www.sistema.com.br");
+                        erros.push("Sistema " + n + ": URL inválida — informe um link válido (ex.: www.sistema.com.br)");
                         marcarCampoErro($url, "www.sistema.com.br");
                     }
                     var $dc = $l.find("[name^='dataContratacao']");
@@ -671,28 +711,63 @@
         }
 
         // Com sistema "Pendente de esclarecimento" marcado, o destino "Fim"
-        // fica desabilitado no seletor de próxima atividade — só resta a
-        // devolução para Corrigir Informações. Roda em intervalo porque o
-        // seletor é renderizado pela plataforma na hora de mover.
-        function ajustarDestinoPendente() {
-            var temPendente = false;
+        // não pode ser escolhido — só resta a devolução para Corrigir
+        // Informações. O seletor de destino é renderizado pela plataforma
+        // na hora de mover (pode ser <option>, <li>, <a>...), então a
+        // marcação visual roda em intervalo e o clique é bloqueado em
+        // fase de captura.
+        function temPendenteMarcado() {
+            var tem = false;
             $("#tb_sistemas [name^='resultadoConferenciaTI']").each(function () {
-                if ($(this).val() === "pendente") temPendente = true;
+                if ($(this).val() === "pendente") tem = true;
             });
-            $("select").each(function () {
-                var $s = $(this);
-                var $opcoes = $s.find("option");
-                var ehDestino = $opcoes.filter(function () {
-                    return $.trim($(this).text()) === "Corrigir Informações";
-                }).length > 0;
-                if (!ehDestino) return;
-                var $fim = $opcoes.filter(function () {
-                    return $.trim($(this).text()) === "Fim";
+            return tem;
+        }
+
+        function ajustarDestinoPendente() {
+            var temPendente = temPendenteMarcado();
+            $("option, li, a, span, label").filter(function () {
+                var $el = $(this);
+                // só folha — o texto exato evita marcar containers inteiros
+                return $.trim($el.text()) === "Fim" && $el.children().length === 0;
+            }).each(function () {
+                var $el = $(this);
+                var dentroDeDestino = false;
+                $el.parents().each(function () {
+                    if ($(this).text().indexOf("Corrigir Informações") !== -1) {
+                        dentroDeDestino = true;
+                        return false;
+                    }
                 });
-                $fim.prop("disabled", temPendente);
-                if (temPendente && $fim.prop("selected")) $s.val("");
+                if (!dentroDeDestino) return;
+                $el.toggleClass("destino-bloqueado", temPendente);
+                if (this.tagName === "OPTION") {
+                    $el.prop("disabled", temPendente);
+                    if (temPendente && $el.prop("selected")) {
+                        $el.closest("select").val("");
+                    }
+                }
             });
         }
+
+        function bloquearCliqueFim(e) {
+            if (estadoAtual() !== "5" || !temPendenteMarcado()) return;
+            var $el = $(e.target);
+            var $alvo = $el.closest("option, li, a, span, label, div");
+            if (!$alvo.length || $.trim($alvo.text()) !== "Fim") return;
+            var dentroDeDestino = false;
+            $alvo.parents().each(function () {
+                if ($(this).text().indexOf("Corrigir Informações") !== -1) {
+                    dentroDeDestino = true;
+                    return false;
+                }
+            });
+            if (!dentroDeDestino) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            mostrarErros(["Há sistema marcado como \"Pendente de esclarecimento\" — devolva para \"Corrigir Informações\"."]);
+        }
+        document.addEventListener("click", bloquearCliqueFim, true);
 
         // A consulta de solicitação ("Detalhes da Solicitação → Formulário")
         // roda dentro de uma página de detalhes — a URL da página-pai é o
@@ -1108,6 +1183,25 @@
         </form>
     </div>
 </div>
+
+    <!-- Modal de confirmação de ação (centralizado, com Sim/Cancelar) -->
+    <div class="ajuda-modal ajuda-modal-central" id="modalConfirmar">
+        <div class="ajuda-modal-dialogo">
+            <div class="ajuda-modal-conteudo">
+                <div class="ajuda-modal-cab">
+                    <button type="button" class="ajuda-modal-fechar" onclick="fecharModalConfirmar()">&times;</button>
+                    <h4>Confirmar remoção</h4>
+                </div>
+                <div class="ajuda-modal-corpo">
+                    <p id="textoConfirmar"></p>
+                </div>
+                <div class="ajuda-modal-rodape">
+                    <button type="button" class="ajuda-btn-fechar" onclick="confirmarAcaoSim()">Sim, remover</button>
+                    <button type="button" class="ajuda-btn-fechar ajuda-btn-cinza" onclick="fecharModalConfirmar()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal de erros de validação (centralizado na tela) -->
     <div class="ajuda-modal ajuda-modal-central" id="modalErros">
