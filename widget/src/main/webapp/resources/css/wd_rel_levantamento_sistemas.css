@@ -48,3 +48,13 @@
     overflow-wrap: break-word;
     vertical-align: top;
 }
+
+/* Solicitação (1), Data (2) e Moeda (7): valores curtos ficam em uma
+   linha só — nada de quebrar caractere pra linha de baixo. */
+.rel-tabela th:nth-child(1), .rel-tabela td:nth-child(1),
+.rel-tabela th:nth-child(2), .rel-tabela td:nth-child(2),
+.rel-tabela th:nth-child(7), .rel-tabela td:nth-child(7) {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
