@@ -670,6 +670,30 @@
             $(".campo-ti-interno").show();
         }
 
+        // Com sistema "Pendente de esclarecimento" marcado, o destino "Fim"
+        // fica desabilitado no seletor de próxima atividade — só resta a
+        // devolução para Corrigir Informações. Roda em intervalo porque o
+        // seletor é renderizado pela plataforma na hora de mover.
+        function ajustarDestinoPendente() {
+            var temPendente = false;
+            $("#tb_sistemas [name^='resultadoConferenciaTI']").each(function () {
+                if ($(this).val() === "pendente") temPendente = true;
+            });
+            $("select").each(function () {
+                var $s = $(this);
+                var $opcoes = $s.find("option");
+                var ehDestino = $opcoes.filter(function () {
+                    return $.trim($(this).text()) === "Corrigir Informações";
+                }).length > 0;
+                if (!ehDestino) return;
+                var $fim = $opcoes.filter(function () {
+                    return $.trim($(this).text()) === "Fim";
+                });
+                $fim.prop("disabled", temPendente);
+                if (temPendente && $fim.prop("selected")) $s.val("");
+            });
+        }
+
         // A consulta de solicitação ("Detalhes da Solicitação → Formulário")
         // roda dentro de uma página de detalhes — a URL da página-pai é o
         // marcador definitivo de contexto read-only; sem WKNumState nem
@@ -725,6 +749,7 @@
 
             if (estadoAtual() === "5") {
                 travarCamposGestor();
+                setInterval(ajustarDestinoPendente, 600);
             }
 
             $("#semSistemas").toggle(linhasIndexadas().length === 0);
@@ -852,19 +877,19 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Nome do sistema *</label>
-                                                    <input type="text" class="form-control" name="nomeSistema" id="nomeSistema" maxlength="150">
+                                                    <input type="text" class="form-control" name="nomeSistema" id="nomeSistema" maxlength="150" placeholder="Ex.: RM">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Fornecedor *</label>
-                                                    <input type="text" class="form-control" name="fornecedorSistema" id="fornecedorSistema" maxlength="150">
+                                                    <input type="text" class="form-control" name="fornecedorSistema" id="fornecedorSistema" maxlength="150" placeholder="Ex.: TOTVS">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Quantidade de licenças</label>
-                                                    <input type="text" class="form-control campo-int" name="quantidadeLicencas" id="quantidadeLicencas" maxlength="9" inputmode="numeric" placeholder="Somente números inteiros">
+                                                    <input type="text" class="form-control campo-int" name="quantidadeLicencas" id="quantidadeLicencas" maxlength="9" inputmode="numeric" placeholder="Ex.: 10">
                                                 </div>
                                             </div>
                                         </div>
@@ -873,7 +898,7 @@
                                             <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label>Finalidade *</label>
-                                                    <textarea class="form-control" name="finalidadeSistema" id="finalidadeSistema" rows="2" maxlength="1000"></textarea>
+                                                    <textarea class="form-control" name="finalidadeSistema" id="finalidadeSistema" rows="2" maxlength="1000" placeholder="Ex.: Controle de folha de pagamento e ponto eletrônico"></textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -895,8 +920,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>URL do sistema web</label>
-                                                    <input type="text" class="form-control" name="urlSistema" id="urlSistema" maxlength="500" placeholder="https://www.sistema.com.br">
-                                                    <span class="ajuda-campo">Habilitado quando o tipo for "Sistema web". Formato: www.sistema.com ou www.sistema.com.br</span>
+                                                    <input type="text" class="form-control" name="urlSistema" id="urlSistema" maxlength="500" placeholder="www.sistema.com.br">
+                                                    <span class="ajuda-campo">Habilitado quando o tipo "Sistema web" for marcado no "Tipo do sistema".</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -964,13 +989,13 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Responsável pela contratação *</label>
-                                                    <input type="text" class="form-control" name="responsavelContratacao" id="responsavelContratacao" maxlength="150">
+                                                    <input type="text" class="form-control" name="responsavelContratacao" id="responsavelContratacao" maxlength="150" placeholder="Ex.: João Silva">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label>Data da contratação</label>
-                                                    <input type="text" class="form-control campo-data" name="dataContratacao" id="dataContratacao" maxlength="10" inputmode="numeric" placeholder="dd/mm/aaaa">
+                                                    <input type="text" class="form-control campo-data" name="dataContratacao" id="dataContratacao" maxlength="10" inputmode="numeric" placeholder="Ex.: 15/03/2024">
                                                 </div>
                                             </div>
                                         </div>
@@ -993,7 +1018,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Observações da área</label>
-                                                    <textarea class="form-control" name="observacoesArea" id="observacoesArea" rows="2" maxlength="1000"></textarea>
+                                                    <textarea class="form-control" name="observacoesArea" id="observacoesArea" rows="2" maxlength="1000" placeholder="Ex.: Licenças utilizadas apenas pelo setor de RH"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1032,7 +1057,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Parecer da TI</label>
-                                                    <textarea class="form-control" name="parecerTI" id="parecerTI" rows="2" maxlength="1000"></textarea>
+                                                    <textarea class="form-control" name="parecerTI" id="parecerTI" rows="2" maxlength="1000" placeholder="Ex.: Sistema já homologado pela TI em 2024"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1041,7 +1066,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Parecer interno (visível apenas para a TI)</label>
-                                                    <textarea class="form-control" name="parecerInterno" id="parecerInterno" rows="2" maxlength="1000"></textarea>
+                                                    <textarea class="form-control" name="parecerInterno" id="parecerInterno" rows="2" maxlength="1000" placeholder="Ex.: Verificar vigência do contrato com o fornecedor"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -1117,7 +1142,7 @@
                         <li><strong>Sistemas:</strong> adicione uma linha para <strong>cada sistema</strong> utilizado pela área. Informe nome, moeda, valor, frequência de pagamento e a finalidade. Se o sistema for web, preencha também a URL.</li>
                         <li><strong>Após o envio:</strong> a equipe de TI confere cada sistema registrado e informa o resultado da conferência.</li>
                         <li><strong>Correção:</strong> se a TI devolver a solicitação, ela volta para você ajustar e reenviar.</li>
-                        <li><strong>Dúvidas:</strong> abra um chamado no Vivaz — <a href="http://10.100.1.55:85/vivaz" target="_blank">http://10.100.1.55:85/vivaz</a>.</li>
+                        <li><strong>Dúvidas:</strong> abra um chamado no <a href="http://10.100.1.55:85/vivaz" target="_blank">Vivaz</a>.</li>
                     </ul>
                     <img id="imgAjudaDoc" alt="Ajuda visual do processo">
                 </div>
