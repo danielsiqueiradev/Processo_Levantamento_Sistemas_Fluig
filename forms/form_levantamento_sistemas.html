@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Levantamento de Sistemas por Departamento</title>
+
+    <!-- Recursos padrão do Fluig -->
+    <link rel="stylesheet" type="text/css" href="/style-guide/css/fluig-style-guide.min.css">
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+    <script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js"></script>
+
+    <style>
+        .formulario-levantamento { padding: 20px 0; }
+        .cabecalho-formulario { margin-bottom: 24px; }
+        .titulo-formulario { margin-top: 0; }
+        .ajuda-campo { display: block; margin-top: 5px; color: #666; font-size: 12px; }
+        .tipo-sistema-opcoes { padding-top: 7px; }
+        .tipo-sistema-opcoes .radio-inline { margin-right: 15px; }
+        .req { color: #d9534f; font-weight: bold; }
+        .campo-invalido { border-color: #d9534f !important; }
+        .erro-campo-msg { color: #d9534f; font-size: 12px; display: block; margin-top: 4px; }
+        .ajuda-modal-central.aberto { display: flex !important; align-items: center; justify-content: center; }
+        .ajuda-cab-erro { background-color: #d9534f !important; }
+        .ajuda-btn-cinza { background: #6c757d !important; margin-left: 8px; }
+        .ajuda-btn-cinza:hover { background: #5a6268 !important; }
+        .destino-bloqueado { opacity: .45 !important; cursor: not-allowed !important; }
+        .tabela-sistemas { width: 100%; }
+        .tabela-sistemas > tbody > tr > td { vertical-align: top; }
+        .sistema-card { padding: 16px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; }
+        .sistema-card h4 { margin-top: 0; }
+        .acoes-tabela { margin-bottom: 15px; }
+        .resumo-moeda { margin: 0; padding-left: 20px; }
+        .resumo-moeda li { margin-bottom: 5px; }
+        .aviso-ti { margin-top: 20px; }
+        .campo-calculado { background: #eee; font-weight: bold; }
+        .btn-ajuda-k {
+            position: fixed; top: 18px; right: 18px; z-index: 999;
+            width: 46px; height: 46px; border: none; border-radius: 8px;
+            background: transparent; color: #fff;
+            font-size: 20px; font-weight: bold; line-height: 46px;
+            text-align: center; cursor: pointer; padding: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.35);
+        }
+        .btn-ajuda-k:hover { opacity: .85; }
+        .btn-ajuda-k img { display: none; width: 100%; height: 100%; border-radius: 8px; }
+        #imgAjudaDoc { display: none; max-width: 100%; margin-top: 15px; border-radius: 4px; }
+        .ajuda-modal {
+            display: none;
+            position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+            z-index: 1060; overflow-x: hidden; overflow-y: auto;
+        }
+        .ajuda-modal.aberto { display: block; }
+        .ajuda-modal-dialogo { position: relative; max-width: 720px; margin: 60px auto; }
+        .ajuda-modal-conteudo {
+            background: #fff; border-radius: 10px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,.4);
+        }
+        .ajuda-modal-cab {
+            padding: 14px 20px; background: #f58220; color: #fff;
+        }
+        .ajuda-modal-cab h4 { margin: 0; font-size: 17px; font-weight: bold; }
+        .ajuda-modal-fechar {
+            float: right; background: none; border: none; padding: 0;
+            font-size: 22px; font-weight: bold; line-height: 1;
+            color: #fff; opacity: .8; cursor: pointer;
+        }
+        .ajuda-modal-fechar:hover { opacity: 1; }
+        .ajuda-modal-corpo { padding: 20px 24px; color: #333; }
+        .ajuda-modal-corpo ul { list-style: none; padding-left: 0; margin: 0; }
+        .ajuda-modal-corpo li {
+            position: relative; padding: 8px 0 8px 26px; line-height: 1.5;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .ajuda-modal-corpo li:last-child { border-bottom: none; }
+        .ajuda-modal-corpo li:before {
+            content: ""; position: absolute; left: 4px; top: 15px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #f58220;
+        }
+        .ajuda-modal-rodape {
+            padding: 12px 20px; background: #f7f7f7;
+            border-top: 1px solid #eee; text-align: right;
+        }
+        .ajuda-btn-fechar {
+            background: #f58220; color: #fff; border: none;
+            padding: 8px 22px; border-radius: 5px;
+            font-weight: bold; cursor: pointer;
+        }
+        .ajuda-btn-fechar:hover { background: #e0731a; }
+        .ajuda-backdrop {
+            position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(0,0,0,.5); z-index: 1055;
+        }
+        body.modal-aberto-trava { overflow: hidden; }
+    </style>
+
+    <script type="text/javascript">
+        function textoSeguro(valor) {
+            return valor === null || valor === undefined ? "" : String(valor).trim();
+        }
+
+        function lerValor(valor) {
+            var texto = textoSeguro(valor);
+            var partes;
+            if (!texto) return null;
+            texto = texto.replace(/R\$\s?/i, "").replace(/\s/g, "");
+            if (texto.indexOf(",") !== -1) {
+                if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+),\d{1,2}$/.test(texto)) return null;
+                texto = texto.replace(/\./g, "").replace(",", ".");
+            } else if (texto.indexOf(".") !== -1) {
+                partes = texto.split(".");
+                if (partes.length !== 2 || !/^\d+$/.test(partes[0]) || !/^\d{1,2}$/.test(partes[1])) return null;
+            } else if (!/^\d+$/.test(texto)) {
+                return null;
+            }
+            var numero = Number(texto);
+            if (!isFinite(numero) || numero < 0) return null;
+            return numero;
+        }
+
+        function formatarValor(valor) {
+            var numero = Number(valor);
+            if (!isFinite(numero)) return "";
+            // Padrão BR: milhar com ponto, decimal com vírgula (8.333,33).
+            var partes = numero.toFixed(2).split(".");
+            partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return partes.join(",");
+        }
+
+        // Quantos meses cada período de cobrança cobre — usado no custo
+        // mensal equivalente e no custo anual estimado.
+        var MESES_FREQUENCIA = { mensal: 1, bimestral: 2, trimestral: 3, semestral: 6, anual: 12 };
+
+        function simboloMoeda(moeda) {
+            if (moeda === "USD") return "US$";
+            if (moeda === "EUR") return "€";
+            return "R$";
+        }
+
+        function obterLinhas() {
+            return $("#tb_sistemas tbody tr").filter(function () {
+                return $(this).find("input[name^='nomeSistema']").length > 0;
+            });
+        }
+
+        // A primeira linha é obrigatória — o botão Remover só aparece nas
+        // linhas adicionais.
+        function atualizarBotoesRemover() {
+            obterLinhas().each(function (i) {
+                $(this).find("button[onclick*='removerSistema']").toggle(i > 0);
+            });
+        }
+
+        // URL só tem sentido pra sistema web: marcado "web" habilita o
+        // campo; qualquer outra opção trava e limpa.
+        function atualizarLinha(linha) {
+            var $linha = $(linha);
+            var tipo = $linha.find("[name^='tipoSistema']:checked").val() || "";
+            var $url = $linha.find("[name^='urlSistema']");
+            $url.prop("disabled", tipo !== "web");
+            if (tipo !== "web") $url.val("");
+
+            var situacao = $linha.find("[name^='situacaoSistema']").val();
+            var $mensal = $linha.find("[name^='custoMensalEstimado']");
+            var $anual = $linha.find("[name^='custoAnualEstimado']");
+            var pago = situacao === "pago";
+
+            // Campos de valor só existem pra sistema pago: gratuito (ou
+            // situação não escolhida) trava e limpa moeda/valor/frequência.
+            var $camposValor = $linha.find("[name^='moedaSistema'], [name^='valorCobranca'], [name^='frequenciaPagamento']");
+            $camposValor.prop("disabled", !pago);
+            if (!pago) $camposValor.val("");
+
+            var moeda = pago ? $linha.find("[name^='moedaSistema']").val() : "";
+            var simbolo = simboloMoeda(moeda);
+
+            // Prefixo do campo de valor e placeholders acompanham a moeda.
+            $linha.find("[name^='valorCobranca']").closest(".input-group")
+                .find(".input-group-addon").text(simbolo);
+            $mensal.attr("placeholder", simbolo + " 0,00");
+            $anual.attr("placeholder", simbolo + " 0,00");
+
+            if (!pago) {
+                var zero = situacao === "gratuito" ? simbolo + " 0,00" : "";
+                $mensal.val(zero);
+                $anual.val(zero);
+                atualizarResumo();
+                return;
+            }
+
+            var valor = lerValor($linha.find("[name^='valorCobranca']").val());
+            var meses = MESES_FREQUENCIA[$linha.find("[name^='frequenciaPagamento']").val()];
+
+            if (valor === null || !meses) {
+                $mensal.val("");
+                $anual.val("");
+                atualizarResumo();
+                return;
+            }
+
+            $mensal.val(simbolo + " " + formatarValor(valor / meses));
+            $anual.val(simbolo + " " + formatarValor(valor * 12 / meses));
+            atualizarResumo();
+        }
+
+        function totaisResumo(linhas) {
+            var totais = {};
+            linhas.forEach(function (d) {
+                var meses = MESES_FREQUENCIA[d.frequenciaPagamento];
+                var valor = lerValor(d.valorCobranca);
+                if (d.situacaoSistema !== "pago" || !d.moedaSistema || valor === null || !meses) return;
+                if (!totais[d.moedaSistema]) totais[d.moedaSistema] = { mensal: 0, anual: 0 };
+                totais[d.moedaSistema].mensal += valor / meses;
+                totais[d.moedaSistema].anual += valor * 12 / meses;
+            });
+            return totais;
+        }
+
+        function renderResumo(totais) {
+            var $resumo = $("#resumoCustos");
+            $resumo.empty();
+            var moedas = Object.keys(totais);
+
+            if (moedas.length === 0) {
+                $resumo.append($("<li>").text("Nenhum custo pago e completo informado."));
+                return;
+            }
+
+            moedas.sort();
+            moedas.forEach(function (moeda) {
+                var simbolo = simboloMoeda(moeda);
+                var texto = moeda + " — mensal: " + simbolo + " " + formatarValor(totais[moeda].mensal) + " | anual: " + simbolo + " " + formatarValor(totais[moeda].anual);
+                $resumo.append($("<li>").text(texto));
+            });
+        }
+
+        function atualizarResumo() {
+            var linhas = [];
+            obterLinhas().each(function () {
+                var $linha = $(this);
+                linhas.push({
+                    situacaoSistema: $linha.find("[name^='situacaoSistema']").val(),
+                    moedaSistema: $linha.find("[name^='moedaSistema']").val(),
+                    frequenciaPagamento: $linha.find("[name^='frequenciaPagamento']").val(),
+                    valorCobranca: $linha.find("[name^='valorCobranca']").val()
+                });
+            });
+            renderResumo(totaisResumo(linhas));
+        }
+
+        // Modo consulta: sem inputs na tela — o resumo sai direto do
+        // sistemasJson salvo.
+        function atualizarResumoView(linhasJson) {
+            renderResumo(totaisResumo(linhasJson || []));
+        }
+
+        // Linha com todos os campos vazios não é dado — é lixo (de gravações
+        // corrompidas ou da linha-modelo). Filtrada na serialização e no rebuild.
+        function linhaSistemaVazia(dados) {
+            for (var k in dados) {
+                if (!dados.hasOwnProperty(k)) continue;
+                if (String(dados[k] || "").replace(/^\s+|\s+$/g, "") !== "") return false;
+            }
+            return true;
+        }
+
+        // Serializa as linhas no campo hidden sistemasJson — o único campo de
+        // dados realmente registrado, então o valor persiste e volta renderizado
+        // pelo servidor. SÓ roda por interação do usuário ou no beforeSendValidate:
+        // serializar durante o rebuild gravaria linhas vazias por cima do dado.
+        function serializarSistemas() {
+            if (!__sistemasInicializado) return;
+            var linhas = [];
+            obterLinhas().each(function () {
+                var dados = {};
+                var indexada = false;
+                $(this).find("[name]").each(function () {
+                    if (!this.name) return;
+                    if (this.type === "radio" && !this.checked) return;
+                    if (/\d+$/.test(this.name)) indexada = true;
+                    dados[this.name.replace(/\d+$/, "")] = $(this).val();
+                });
+                if (indexada && !linhaSistemaVazia(dados)) linhas.push(dados);
+            });
+            $("#sistemasJson").val(JSON.stringify(linhas));
+        }
+
+        // Lê as linhas salvas: prefere o campo renderizado pelo servidor
+        // (na consulta o Fluig pode renderizar como texto — cai pro
+        // textContent); depois o __sistemasSalvos emitido pelo displayFields.
+        function sistemasSalvos() {
+            var linhas = [];
+            try {
+                var el = document.querySelector("#sistemasJson");
+                var bruto = el ? (el.value || el.textContent || el.getAttribute("value") || "") : "";
+                linhas = JSON.parse(bruto.replace(/^\s+|\s+$/g, "") || "[]");
+            } catch (e) {}
+            if (!linhas.length && window.__sistemasSalvos) linhas = window.__sistemasSalvos;
+            return linhas.filter(function (l) { return !linhaSistemaVazia(l); });
+        }
+
+        // ============ Renderização read-only (modo consulta/VIEW) ============
+        // No modo consulta a plataforma reescreve os inputs do DOM — em vez de
+        // reconstruir o template com campos, monta os cards como texto.
+        var ROTULOS_SISTEMA = {
+            nomeSistema: "Nome do sistema", fornecedorSistema: "Fornecedor",
+            quantidadeLicencas: "Quantidade de licenças", finalidadeSistema: "Finalidade",
+            tipoSistema: "Tipo do sistema", urlSistema: "URL do sistema web",
+            situacaoSistema: "Situação", moedaSistema: "Moeda",
+            valorCobranca: "Valor total por cobrança", frequenciaPagamento: "Frequência de pagamento",
+            custoMensalEstimado: "Custo mensal", custoAnualEstimado: "Custo anual",
+            responsavelContratacao: "Responsável pela contratação", dataContratacao: "Data da contratação",
+            aprovacaoDeclarada: "Aprovação prévia da TI?",
+            observacoesArea: "Observações da área", resultadoConferenciaTI: "Resultado da conferência",
+            encaminhamentoTI: "Encaminhamento",
+            parecerTI: "Parecer da TI", parecerInterno: "Parecer interno"
+        };
+
+        var TEXTOS_SISTEMA = {
+            tipoSistema: { local: "Sistema local", web: "Sistema web" },
+            situacaoSistema: { pago: "Pago", gratuito: "Gratuito" },
+            moedaSistema: { BRL: "BRL — Real", USD: "USD — Dólar", EUR: "EUR — Euro" },
+            frequenciaPagamento: { mensal: "Mensal", bimestral: "Bimestral", trimestral: "Trimestral", semestral: "Semestral", anual: "Anual" },
+            aprovacaoDeclarada: { sim: "Sim", nao: "Não", nao_sei: "Não sei informar" },
+            resultadoConferenciaTI: {
+                aprovado: "Aprovado", reprovado: "Reprovado",
+                pendente: "Pendente de esclarecimento",
+                aprovacao_localizada: "Aprovado",
+                sem_aprovacao_identificada: "Reprovado"
+            },
+            encaminhamentoTI: { manter: "Manter", regularizar: "Avaliar regularização", descontinuar: "Avaliar descontinuação", desinstalar: "Desinstalar", bloquear: "Bloquear" }
+        };
+
+        var CAMPOS_VIEW_GESTOR = ["nomeSistema", "fornecedorSistema", "quantidadeLicencas",
+            "finalidadeSistema", "tipoSistema", "urlSistema", "situacaoSistema", "moedaSistema", "valorCobranca",
+            "frequenciaPagamento", "custoMensalEstimado", "custoAnualEstimado",
+            "responsavelContratacao", "dataContratacao", "aprovacaoDeclarada",
+            "observacoesArea"];
+        // parecerInterno fica de fora de propósito: a consulta não distingue
+        // TI de solicitante, então o campo interno só existe na etapa 5.
+        var CAMPOS_VIEW_TI = ["resultadoConferenciaTI",
+            "encaminhamentoTI", "parecerTI"];
+
+        function valorCampoView(campo, dados) {
+            var v = dados[campo];
+            if (v === null || v === undefined || String(v).replace(/^\s+|\s+$/g, "") === "") return "—";
+            if (campo === "valorCobranca" && dados.moedaSistema) {
+                var n = lerValor(v);
+                if (n !== null) return simboloMoeda(dados.moedaSistema) + " " + formatarValor(n);
+            }
+            var mapa = TEXTOS_SISTEMA[campo];
+            if (mapa && mapa[v]) return mapa[v];
+            if (campo === "dataContratacao" && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
+                var p = v.split("-");
+                return p[2] + "/" + p[1] + "/" + p[0];
+            }
+            return String(v);
+        }
+
+        function blocoCamposView(dados, campos) {
+            var $frag = $(document.createDocumentFragment());
+            for (var i = 0; i < campos.length; i += 3) {
+                var $row = $('<div class="row">');
+                for (var j = i; j < i + 3 && j < campos.length; j++) {
+                    var c = campos[j];
+                    var $g = $('<div class="col-md-4"><div class="form-group"></div></div>').find(".form-group");
+                    $g.append($("<label>").text(ROTULOS_SISTEMA[c] || c));
+                    // .text() escapa o valor — seguro contra HTML injetado nos dados
+                    $g.append($('<div class="valor-view">').text(valorCampoView(c, dados)));
+                    $row.append($g.parent());
+                }
+                $frag.append($row);
+            }
+            return $frag;
+        }
+
+        function renderizarSistemasView(linhas) {
+            var $tbody = $("#tb_sistemas tbody").empty();
+            if (!linhas.length) {
+                $("#semSistemas").show();
+                return;
+            }
+            $("#semSistemas").hide();
+            linhas.forEach(function (dados) {
+                var $tr = $("<tr><td></td></tr>");
+                var $card = $('<div class="sistema-card sistema-card-view">');
+                $card.append('<div class="row"><div class="col-md-10"><h4>Dados do sistema</h4></div></div>');
+                $card.append(blocoCamposView(dados, CAMPOS_VIEW_GESTOR));
+                $card.append("<hr><h4>Conferência da TI</h4>");
+                $card.append(blocoCamposView(dados, CAMPOS_VIEW_TI));
+                $tr.find("td").append($card);
+                $tbody.append($tr);
+            });
+        }
+
+        // O template da linha de sistema usa nomes flat (nomeSistema,
+        // fornecedorSistema, ...) porque qualquer sufixo ___ no HTML é
+        // registrado pelo servidor como item sem índice e quebra a gravação.
+        // Guardamos uma cópia em memória, removemos a linha do DOM e
+        // numeramos os clones manualmente (nomeSistema1, nomeSistema2, ...).
+        var sistemaTemplate = null;
+        var __sistemasInicializado = false;
+
+        function prepararTemplateSistemas() {
+            var $tr = $("#tb_sistemas tbody tr").filter(function () {
+                return $(this).find("[name='nomeSistema']").length > 0;
+            }).first();
+            if ($tr.length > 0) {
+                sistemaTemplate = $tr.clone();
+                $tr.remove();
+            }
+        }
+
+        function linhasIndexadas() {
+            return $("#tb_sistemas").find("[name]").filter(function () {
+                return /\d+$/.test(this.name || "");
+            });
+        }
+
+        function proximoIndiceSistema() {
+            var max = 0;
+            linhasIndexadas().each(function () {
+                var m = /(\d+)$/.exec(this.name || "");
+                if (m) max = Math.max(max, parseInt(m[1], 10));
+            });
+            return max + 1;
+        }
+
+        function adicionarSistema() {
+            if (!sistemaTemplate) {
+                alert("Não foi possível adicionar a linha de sistema.");
+                return 0;
+            }
+            var idx = proximoIndiceSistema();
+            var $nova = sistemaTemplate.clone();
+            $nova.find("[name]").each(function () {
+                var novo = this.name + idx;
+                this.name = novo;
+                if (this.id) this.id = novo;
+                $(this).prop("disabled", false);
+            });
+            // O clone herda o ocultamento que a plataforma aplica na linha-modelo
+            $nova.css("display", "table-row").removeAttr("hidden");
+            // Asterisco de obrigatório em vermelho nos clones novos
+            $nova.find("label").each(function () {
+                this.innerHTML = this.innerHTML.replace(/\s\*(?=\s*$)/,
+                    ' <span class="req">*</span>');
+            });
+            $("#tb_sistemas tbody").append($nova);
+            $("#semSistemas").hide();
+            // Nasce com os campos de valor travados até escolher a situação.
+            atualizarLinha($nova[0]);
+            atualizarResumo();
+            atualizarBotoesRemover();
+            return idx;
+        }
+
+        // Preenche uma linha recém-criada com os dados salvos (vindos do
+        // displayFields em window.__sistemasSalvos, chaves = nomes base).
+        function preencherLinhaSistema(idx, dados) {
+            if (!idx || !dados) return;
+            for (var campo in dados) {
+                if (!dados.hasOwnProperty(campo)) continue;
+                var $els = $("#tb_sistemas [name='" + campo + idx + "']");
+                if ($els.length && $els.get(0).type === "radio") {
+                    $els.filter(function () { return this.value === String(dados[campo]); })
+                        .prop("checked", true);
+                } else {
+                    $els.val(dados[campo]);
+                }
+            }
+            var $tr = $("#tb_sistemas [name='nomeSistema" + idx + "']").closest("tr");
+            if ($tr.length) atualizarLinha($tr[0]);
+        }
+
+        // Confirmação de remoção em modal próprio (centralizado, igual aos
+        // outros diálogos do form) — o confirm() nativo aparece no topo.
+        var __confirmarCb = null;
+        function confirmarAcao(texto, cb) {
+            $("#textoConfirmar").text(texto);
+            __confirmarCb = cb;
+            var m = document.getElementById("modalConfirmar");
+            if (m.className.indexOf("aberto") === -1) {
+                m.className += " aberto";
+                document.body.className += " modal-aberto-trava";
+                var bd = document.createElement("div");
+                bd.className = "ajuda-backdrop";
+                bd.id = "backdropConfirmar";
+                bd.onclick = fecharModalConfirmar;
+                document.body.appendChild(bd);
+            }
+        }
+        function fecharModalConfirmar() {
+            var m = document.getElementById("modalConfirmar");
+            m.className = m.className.replace(" aberto", "");
+            document.body.className =
+                document.body.className.replace(" modal-aberto-trava", "");
+            var bd = document.getElementById("backdropConfirmar");
+            if (bd) bd.parentNode.removeChild(bd);
+            __confirmarCb = null;
+        }
+        function confirmarAcaoSim() {
+            var cb = __confirmarCb;
+            fecharModalConfirmar();
+            if (cb) cb();
+        }
+
+        function removerSistema(botao) {
+            confirmarAcao("Deseja remover este sistema do levantamento?", function () {
+                $(botao).closest("tr").remove();
+                atualizarResumo();
+                serializarSistemas();
+                atualizarBotoesRemover();
+                $("#semSistemas").toggle(linhasIndexadas().length === 0);
+            });
+        }
+
+        // Serialização final síncrona antes do envio — garante o último estado
+        // das linhas mesmo se algum evento de change foi perdido.
+        // Marca o campo com erro: borda vermelha + mensagem embaixo
+        // + placeholder com o exemplo do formato esperado.
+        function marcarCampoErro($campo, exemplo, msg) {
+            $campo.addClass("campo-invalido");
+            if (exemplo) $campo.attr("placeholder", exemplo);
+            var $grupo = $campo.closest(".form-group");
+            if ($grupo.length && !$grupo.find(".erro-campo-msg").length) {
+                $grupo.append(
+                    '<span class="erro-campo-msg">' +
+                    (msg || "Preenchimento incorreto") + '</span>');
+            }
+        }
+
+        // Validação client-side das novas regras — feedback instantâneo;
+        // o validateForm do servidor faz a checagem definitiva.
+        // URL válida = domínio estruturado (host.tld) ou IP, com protocolo,
+        // www, porta e caminho opcionais. Qualquer TLD serve — não precisa
+        // ser .com/.com.br.
+        function urlValida(u) {
+            return /^(https?:\/\/)?(www\.)?[\w-]+(\.[\w-]+)+(:\d+)?(\/\S*)?$/i.test(u)
+                || /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/\S*)?$/i.test(u);
+        }
+
+        function dataContratacaoValida(s) {
+            var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+            if (!m) return false;
+            var d = +m[1], mo = +m[2], a = +m[3];
+            if (mo < 1 || mo > 12 || d < 1 || d > 31) return false;
+            var bissexto = a % 4 == 0 && (a % 100 != 0 || a % 400 == 0);
+            var dias = [31, bissexto ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            return d <= dias[mo - 1];
+        }
+
+        window.beforeSendValidate = function () {
+            serializarSistemas();
+            var at = estadoAtual();
+            // Etapa TI: a conferência é obrigatória em TODA linha — o option
+            // vazio ("Ainda não conferido") não pode passar.
+            if (at === "5") {
+                var pendente = false;
+                obterLinhas().each(function () {
+                    if (!$(this).find("[name^='resultadoConferenciaTI']").val()) pendente = true;
+                });
+                if (obterLinhas().length === 0 || pendente) {
+                    mostrarErros(["Selecione o Resultado da conferência da TI para cada sistema."]);
+                    return false;
+                }
+            }
+            if (at === "0" || at === "4" || at === "13") {
+                var erros = [];
+                $(".campo-invalido").removeClass("campo-invalido");
+                $(".erro-campo-msg").remove();
+
+                // Campos da identificação (preenchidos automaticamente —
+                // se estiverem vazios, algo falhou na carga).
+                if (!$.trim($("[name='departamento']").val() || "")) {
+                    erros.push("Identificação: Departamento não foi preenchido — deveria vir automático; recarregue a página ou fale com a TI.");
+                    marcarCampoErro($("[name='departamento']"), null, "Campo obrigatório");
+                }
+                if (!$.trim($("[name='gestorResponsavel']").val() || "")) {
+                    erros.push("Identificação: Solicitante não foi preenchido.");
+                    marcarCampoErro($("[name='gestorResponsavel']"), null, "Campo obrigatório");
+                }
+                if (!$.trim($("[name='dataLevantamento']").val() || "")) {
+                    erros.push("Identificação: Data do levantamento não foi preenchida.");
+                    marcarCampoErro($("[name='dataLevantamento']"), null, "Campo obrigatório");
+                }
+
+                // Valida TODOS os obrigatórios de cada linha de uma vez —
+                // o modal lista tudo o que falta, não só o primeiro erro.
+                if (obterLinhas().length === 0) {
+                    erros.push("Adicione pelo menos um sistema utilizado pelo departamento.");
+                }
+                obterLinhas().each(function (i) {
+                    var $l = $(this), n = i + 1;
+
+                    // obrigatório simples: vazio → erro + marca
+                    function obrig(sel, rotulo, exemplo) {
+                        var $c = $l.find(sel);
+                        if (!$.trim($c.val() || "")) {
+                            erros.push("Sistema " + n + ": campo obrigatório " + rotulo + " não preenchido.");
+                            marcarCampoErro($c, exemplo, "Campo obrigatório");
+                        }
+                    }
+
+                    obrig("[name^='nomeSistema']", "Nome do sistema", "Ex.: RM");
+                    obrig("[name^='fornecedorSistema']", "Fornecedor", "Ex.: TOTVS");
+                    obrig("[name^='finalidadeSistema']", "Finalidade", "Ex.: Controle de folha de pagamento");
+                    obrig("[name^='situacaoSistema']", "Situação", null);
+                    obrig("[name^='aprovacaoDeclarada']", "Aprovação prévia da TI?", null);
+                    obrig("[name^='responsavelContratacao']", "Responsável pela contratação", "Ex.: João Silva");
+
+                    var $qtd = $l.find("[name^='quantidadeLicencas']");
+                    var qtd = $.trim($qtd.val() || "");
+                    if (qtd !== "" && !/^\d+$/.test(qtd)) {
+                        erros.push("Sistema " + n + ": Quantidade de licenças aceita somente números inteiros.");
+                        marcarCampoErro($qtd, "Ex.: 10");
+                    }
+
+                    var tipo = $l.find("[name^='tipoSistema']:checked").val() || "";
+                    if (tipo === "") {
+                        erros.push("Sistema " + n + ": selecione o Tipo do sistema (Local ou Web).");
+                        marcarCampoErro($l.find(".tipo-sistema-opcoes"), null, "Campo obrigatório");
+                    }
+
+                    var $url = $l.find("[name^='urlSistema']");
+                    var url = $.trim($url.val() || "");
+                    if (tipo === "web" && url !== "" && !urlValida(url)) {
+                        erros.push("Sistema " + n + ": URL inválida — informe um link válido (ex.: www.sistema.com.br)");
+                        marcarCampoErro($url, "www.sistema.com.br");
+                    }
+
+                    var $dc = $l.find("[name^='dataContratacao']");
+                    var dc = $.trim($dc.val() || "");
+                    if (dc !== "" && !dataContratacaoValida(dc)) {
+                        erros.push("Sistema " + n + ": Data da contratação inválida — use dd/mm/aaaa com uma data real.");
+                        marcarCampoErro($dc, "Ex.: 15/03/2024");
+                    }
+
+                    if ($l.find("[name^='situacaoSistema']").val() === "pago") {
+                        obrig("[name^='moedaSistema']", "Moeda", null);
+                        obrig("[name^='valorCobranca']", "Valor total por cobrança", "Ex.: 1.234,56");
+                        obrig("[name^='frequenciaPagamento']", "Frequência de pagamento", null);
+                    }
+                });
+                if (erros.length) {
+                    mostrarErros(erros);
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        // Em algumas versões o dataset do cliente não tem getValue()/rowsCount;
+        // os dados vêm em ds.values (array de objetos por coluna).
+        function dsLinhas(ds) {
+            if (ds == null) return 0;
+            if (typeof ds.rowsCount === "number") return ds.rowsCount;
+            if (ds.values && ds.values.length != null) return ds.values.length;
+            return 0;
+        }
+
+        function dsValor(ds, linha, col) {
+            try {
+                if (ds != null && typeof ds.getValue === "function") {
+                    var v = ds.getValue(linha, col);
+                    return v == null ? "" : String(v);
+                }
+            } catch (e) {}
+            try {
+                if (ds != null && ds.values && ds.values[linha]) {
+                    var v2 = ds.values[linha][col];
+                    return v2 == null ? "" : String(v2);
+                }
+            } catch (e) {}
+            return "";
+        }
+
+        // O form roda num iframe; WCMAPI, DatasetFactory e ConstraintType
+        // podem existir só na janela pai. Busca o global em todas elas.
+        function getGlobalFluig(nome) {
+            var wins = [window];
+            try { if (window.parent) wins.push(window.parent); } catch (e) {}
+            try { if (window.top) wins.push(window.top); } catch (e) {}
+            for (var i = 0; i < wins.length; i++) {
+                try { if (wins[i][nome]) return wins[i][nome]; } catch (e) {}
+            }
+            return null;
+        }
+
+        // Fallback client-side: só consulta se o displayFields (servidor)
+        // não tiver preenchido o departamento. O e-mail do usuário logado
+        // é resolvido dentro do próprio dataset via getValue("WKUser").
+        function carregarDadosDepartamento() {
+            var $dep = $("#departamento");
+            var $gestor = $("#gestorResponsavel");
+
+            if (textoSeguro($dep.val()) !== "") return;
+
+            try {
+                var DF = getGlobalFluig("DatasetFactory");
+                if (!DF) {
+                    $dep.attr("placeholder", "DatasetFactory indisponível no contexto do form");
+                    console.error("[dpt] DatasetFactory não encontrado");
+                    return;
+                }
+
+                var ds = DF.getDataset("ds_consulta_dpt_rm", null, null, null);
+
+                if (dsLinhas(ds) == 0) {
+                    $dep.attr("placeholder", "Departamento não encontrado");
+                    console.warn("[dpt] ds_consulta_dpt_rm vazio");
+                    return;
+                }
+
+                var status = dsValor(ds, 0, "STATUS");
+                var descricao = dsValor(ds, 0, "DESCRICAO");
+
+                // STATUS "" = dataset antigo publicado (sem a coluna); mantém comportamento antigo
+                if (status === "OK" || (status === "" && descricao !== "")) {
+                    $dep.val(descricao);
+                    var nomeRM = dsValor(ds, 0, "NOME");
+                    if (nomeRM !== "") $gestor.val(nomeRM);
+                    console.log("Dados do departamento carregados com sucesso!");
+                } else {
+                    var msg = dsValor(ds, 0, "MENSAGEM") || "Falha na consulta do departamento";
+                    $dep.attr("placeholder", msg);
+                    console.warn("DS_CONSULTA_DPT:", msg);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar dados do departamento:", error);
+                $dep.attr("placeholder", "Erro ao carregar departamento");
+            }
+        }
+
+        // A atividade atual vem na URL do iframe (WKNumState=N) — leitura
+        // client-side, não depende de script emitido pelo customHTML.
+        function estadoAtual() {
+            var m = /[?&]WKNumState=(\d+)/.exec(window.location.search || "");
+            return m ? m[1] : "";
+        }
+
+        // Atividade 5 (Conferência TI): trava tudo que não é campo da TI
+        // e revela o Parecer interno (só a TI vê esse campo).
+        function travarCamposGestor() {
+            $("#tb_sistemas input, #tb_sistemas select, #tb_sistemas textarea").each(function () {
+                if (!/^(resultadoConferenciaTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) {
+                    $(this).prop("disabled", true);
+                }
+            });
+            $(".acoes-tabela, button[onclick*='removerSistema']").hide();
+            $(".campo-ti-interno").show();
+        }
+
+        // Com sistema "Pendente de esclarecimento" marcado, o destino "Fim"
+        // não pode ser escolhido — só resta a devolução para Corrigir
+        // Informações. O seletor de destino é renderizado pela plataforma
+        // na hora de mover (pode ser <option>, <li>, <a>...), então a
+        // marcação visual roda em intervalo e o clique é bloqueado em
+        // fase de captura.
+        function temPendenteMarcado() {
+            var tem = false;
+            $("#tb_sistemas [name^='resultadoConferenciaTI']").each(function () {
+                if ($(this).val() === "pendente") tem = true;
+            });
+            return tem;
+        }
+
+        function ajustarDestinoPendente() {
+            var temPendente = temPendenteMarcado();
+            $("option, li, a, span, label").filter(function () {
+                var $el = $(this);
+                // só folha — o texto exato evita marcar containers inteiros
+                return $.trim($el.text()) === "Fim" && $el.children().length === 0;
+            }).each(function () {
+                var $el = $(this);
+                var dentroDeDestino = false;
+                $el.parents().each(function () {
+                    if ($(this).text().indexOf("Corrigir Informações") !== -1) {
+                        dentroDeDestino = true;
+                        return false;
+                    }
+                });
+                if (!dentroDeDestino) return;
+                $el.toggleClass("destino-bloqueado", temPendente);
+                if (this.tagName === "OPTION") {
+                    $el.prop("disabled", temPendente);
+                    if (temPendente && $el.prop("selected")) {
+                        $el.closest("select").val("");
+                    }
+                }
+            });
+        }
+
+        function bloquearCliqueFim(e) {
+            if (estadoAtual() !== "5" || !temPendenteMarcado()) return;
+            var $el = $(e.target);
+            var $alvo = $el.closest("option, li, a, span, label, div");
+            if (!$alvo.length || $.trim($alvo.text()) !== "Fim") return;
+            var dentroDeDestino = false;
+            $alvo.parents().each(function () {
+                if ($(this).text().indexOf("Corrigir Informações") !== -1) {
+                    dentroDeDestino = true;
+                    return false;
+                }
+            });
+            if (!dentroDeDestino) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            mostrarErros(["Há sistema marcado como \"Pendente de esclarecimento\" — devolva para \"Corrigir Informações\"."]);
+        }
+        document.addEventListener("click", bloquearCliqueFim, true);
+
+        // A consulta de solicitação ("Detalhes da Solicitação → Formulário")
+        // roda dentro de uma página de detalhes — a URL da página-pai é o
+        // marcador definitivo de contexto read-only; sem WKNumState nem
+        // MODO_FORMULARIO também indica exibição estática.
+        function contextoConsulta() {
+            try {
+                var p = (window.parent && window.parent.location && window.parent.location.href) || "";
+                if (/detailsProcessInstanceID|workflowview_details/i.test(p)) return true;
+            } catch (e) {}
+            return estadoAtual() === "";
+        }
+
+        $(document).ready(function () {
+            // Na consulta de solicitação finalizada MODO_FORMULARIO nem existe —
+            // sem WKNumState na URL do iframe o form é só exibição = read-only.
+            var modoView = (typeof MODO_FORMULARIO !== 'undefined' && MODO_FORMULARIO === 'VIEW')
+                || contextoConsulta();
+
+            prepararTemplateSistemas();
+
+            // Reconstrói as linhas salvas (o displayFields entrega os dados
+            // em sistemasJson/__sistemasSalvos porque a plataforma não
+            // renderiza campos flat nomeSistemaN sozinha).
+            // Idempotente: se o ready rodar 2x (re-render da plataforma),
+            // limpa as linhas reconstruídas antes de montar de novo.
+            obterLinhas().remove();
+            var salvos = sistemasSalvos();
+
+            if (modoView) {
+                // Consulta: renderiza read-only direto do JSON — a plataforma
+                // reescreve inputs neste modo, então texto puro é o caminho
+                // determinístico. O re-render tardio cobre a plataforma
+                // injetando linhas depois do ready.
+                renderizarSistemasView(salvos);
+                atualizarResumoView(salvos);
+                $(".acoes-tabela").hide();
+                setTimeout(function () { renderizarSistemasView(sistemasSalvos()); }, 800);
+                setTimeout(function () { renderizarSistemasView(sistemasSalvos()); }, 2500);
+                return;
+            }
+
+            for (var i = 0; i < salvos.length; i++) {
+                preencherLinhaSistema(adicionarSistema(), salvos[i]);
+            }
+            __sistemasInicializado = true;
+
+            // Abertura sempre com uma linha pronta pra preencher (nas
+            // etapas do gestor) — quem tem mais de um sistema adiciona
+            // as próximas pelo botão no fim da tabela.
+            if (estadoAtual() !== "5" && linhasIndexadas().length === 0) {
+                adicionarSistema();
+            }
+
+            if (estadoAtual() === "5") {
+                travarCamposGestor();
+                setInterval(ajustarDestinoPendente, 600);
+            }
+
+            $("#semSistemas").toggle(linhasIndexadas().length === 0);
+
+            $(document).on("input change", "#tb_sistemas input, #tb_sistemas select, #tb_sistemas textarea", function () {
+                atualizarLinha($(this).closest("tr"));
+                serializarSistemas();
+            });
+
+            // Máscaras de entrada: licenças só dígitos; data dd/mm/aaaa.
+            $(document).on("input", "[name^='quantidadeLicencas']", function () {
+                this.value = this.value.replace(/\D/g, "");
+            });
+            $(document).on("input", "[name^='dataContratacao']", function () {
+                var d = this.value.replace(/\D/g, "").substring(0, 8);
+                this.value = d
+                    .replace(/(\d{2})(\d)/, "$1/$2")
+                    .replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
+            });
+            // Ao sair do campo, formata o valor no padrão 1.234,56.
+            $(document).on("focusout", "[name^='valorCobranca']", function () {
+                var n = lerValor(this.value);
+                if (n !== null) {
+                    this.value = formatarValor(n);
+                    atualizarLinha($(this).closest("tr"));
+                    serializarSistemas();
+                }
+            });
+            obterLinhas().each(function () {
+                atualizarLinha(this);
+            });
+            atualizarResumo();
+
+            // Carrega os dados do departamento ao iniciar o formulário
+            carregarDadosDepartamento();
+
+            // Preenche a data atual automaticamente (dd/mm/aaaa)
+            var d = new Date();
+            var hoje = ("0" + d.getDate()).slice(-2) + "/" +
+                ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+            $("#dataLevantamento").val(hoje);
+
+            // Asterisco de obrigatório em vermelho nos campos fora da tabela
+            $("label").each(function () {
+                this.innerHTML = this.innerHTML.replace(/\s\*(?=\s*$)/,
+                    ' <span class="req">*</span>');
+            });
+
+            // Limpa a marcação de erro quando o usuário corrige o campo
+            $(document).on("input change", ".campo-invalido", function () {
+                $(this).removeClass("campo-invalido");
+                $(this).closest(".form-group").find(".erro-campo-msg").remove();
+            });
+        });
+    </script>
+</head>
+
+<body>
+<div class="fluig-style-guide">
+    <div class="container-fluid formulario-levantamento">
+        <form name="form" role="form">
+
+            <div class="cabecalho-formulario">
+                <h1 class="titulo-formulario">Levantamento de Sistemas por Departamento</h1>
+                <p>Informe os sistemas utilizados pela sua área. A equipe de TI realizará a conferência das informações.</p>
+            </div>
+
+            <!-- Botão de ajuda (documentação do processo) -->
+            <button type="button" class="btn-ajuda-k" onclick="abrirModalAjuda()"
+                    title="Ajuda do processo"><span id="txtAjudaK">K?</span><img id="imgLogoAjuda" alt="Ajuda"></button>
+
+            <!-- Identificação -->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">1. Identificação do departamento</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="departamento">Departamento *</label>
+                                <input type="text" class="form-control campo-calculado" name="departamento" id="departamento" readonly="readonly" placeholder="Carregando departamento...">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="gestorResponsavel">Solicitante *</label>
+                                <input type="text" class="form-control campo-calculado" name="gestorResponsavel" id="gestorResponsavel" readonly="readonly" placeholder="Carregando solicitante...">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="dataLevantamento">Data do levantamento *</label>
+                                <input type="text" class="form-control campo-calculado" name="dataLevantamento" id="dataLevantamento" readonly="readonly">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistemas -->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">2. Sistemas utilizados</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Adicione uma linha para cada sistema utilizado pelo departamento.</p>
+
+                    <table tablename="tb_sistemas" id="tb_sistemas" class="tabela-sistemas" noaddbutton="true" nodeletebutton="true">
+                        <thead><tr><th></th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="sistema-card">
+                                        <div class="row">
+                                            <div class="col-md-10"><h4>Dados do sistema</h4></div>
+                                            <div class="col-md-2 text-right">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="removerSistema(this)">Remover</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Nome do sistema *</label>
+                                                    <input type="text" class="form-control" name="nomeSistema" id="nomeSistema" maxlength="150" placeholder="Ex.: RM">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Fornecedor *</label>
+                                                    <input type="text" class="form-control" name="fornecedorSistema" id="fornecedorSistema" maxlength="150" placeholder="Ex.: TOTVS">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Quantidade de licenças</label>
+                                                    <input type="text" class="form-control campo-int" name="quantidadeLicencas" id="quantidadeLicencas" maxlength="9" inputmode="numeric" placeholder="Ex.: 10">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label>Finalidade *</label>
+                                                    <textarea class="form-control" name="finalidadeSistema" id="finalidadeSistema" rows="2" maxlength="1000" placeholder="Ex.: Controle de folha de pagamento e ponto eletrônico"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Tipo do sistema *</label>
+                                                    <div class="tipo-sistema-opcoes">
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="tipoSistema" value="local"> Sistema local
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="tipoSistema" value="web"> Sistema web
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>URL do sistema web</label>
+                                                    <input type="text" class="form-control" name="urlSistema" id="urlSistema" maxlength="500" placeholder="www.sistema.com.br">
+                                                    <span class="ajuda-campo">Habilitado quando o tipo "Sistema web" for marcado no "Tipo do sistema".</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Situação *</label>
+                                                    <select class="form-control" name="situacaoSistema" id="situacaoSistema">
+                                                        <option value="">Selecione</option>
+                                                        <option value="pago">Pago</option>
+                                                        <option value="gratuito">Gratuito</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Moeda *</label>
+                                                    <select class="form-control" name="moedaSistema" id="moedaSistema">
+                                                        <option value="">Selecione</option>
+                                                        <option value="BRL">BRL — Real</option>
+                                                        <option value="USD">USD — Dólar</option>
+                                                        <option value="EUR">EUR — Euro</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Frequência de pagamento *</label>
+                                                    <select class="form-control" name="frequenciaPagamento" id="frequenciaPagamento">
+                                                        <option value="">Selecione</option>
+                                                        <option value="mensal">Mensal</option>
+                                                        <option value="bimestral">Bimestral</option>
+                                                        <option value="trimestral">Trimestral</option>
+                                                        <option value="semestral">Semestral</option>
+                                                        <option value="anual">Anual</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Valor total por cobrança</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">R$</span>
+                                                        <input type="text" class="form-control campo-valor" name="valorCobranca" id="valorCobranca" placeholder="Ex.: 1.234,56" inputmode="decimal">
+                                                    </div>
+                                                    <span class="ajuda-campo">Informe o valor total, não o valor por licença.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Custo mensal</label>
+                                                    <input type="text" class="form-control campo-calculado" name="custoMensalEstimado" id="custoMensalEstimado" placeholder="R$ 0,00" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Custo anual</label>
+                                                    <input type="text" class="form-control campo-calculado" name="custoAnualEstimado" id="custoAnualEstimado" placeholder="R$ 0,00" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Responsável pela contratação *</label>
+                                                    <input type="text" class="form-control" name="responsavelContratacao" id="responsavelContratacao" maxlength="150" placeholder="Ex.: João Silva">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Data da contratação</label>
+                                                    <input type="text" class="form-control campo-data" name="dataContratacao" id="dataContratacao" maxlength="10" inputmode="numeric" placeholder="Ex.: 15/03/2024">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Aprovação prévia da TI? *</label>
+                                                    <select class="form-control" name="aprovacaoDeclarada" id="aprovacaoDeclarada">
+                                                        <option value="">Selecione</option>
+                                                        <option value="sim">Sim</option>
+                                                        <option value="nao">Não</option>
+                                                        <option value="nao_sei">Não sei informar</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Observações da área</label>
+                                                    <textarea class="form-control" name="observacoesArea" id="observacoesArea" rows="2" maxlength="1000" placeholder="Ex.: Licenças utilizadas apenas pelo setor de RH"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <h4>Conferência da TI</h4>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Resultado da conferência *</label>
+                                                    <select class="form-control" name="resultadoConferenciaTI" id="resultadoConferenciaTI">
+                                                        <option value="">Ainda não conferido</option>
+                                                        <option value="aprovado">Aprovado</option>
+                                                        <option value="reprovado">Reprovado</option>
+                                                        <option value="pendente">Pendente de esclarecimento</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Encaminhamento</label>
+                                                    <select class="form-control" name="encaminhamentoTI" id="encaminhamentoTI">
+                                                        <option value="">Selecione</option>
+                                                        <option value="manter">Manter</option>
+                                                        <option value="regularizar">Avaliar regularização</option>
+                                                        <option value="descontinuar">Avaliar descontinuação</option>
+                                                        <option value="desinstalar">Desinstalar</option>
+                                                        <option value="bloquear">Bloquear</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Parecer da TI</label>
+                                                    <textarea class="form-control" name="parecerTI" id="parecerTI" rows="2" maxlength="1000" placeholder="Ex.: Sistema já homologado pela TI em 2024"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row campo-ti-interno" style="display: none;">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label>Parecer interno (visível apenas para a TI)</label>
+                                                    <textarea class="form-control" name="parecerInterno" id="parecerInterno" rows="2" maxlength="1000" placeholder="Ex.: Verificar vigência do contrato com o fornecedor"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Fonte da verdade das linhas: campo registrado cujo valor
+                         é serializado pelo cliente a cada mudança e devolvido
+                         pelo servidor já renderizado — reconstrói a tabela em
+                         qualquer atividade sem depender de timing de script. -->
+                    <textarea name="sistemasJson" id="sistemasJson" style="display:none" rows="1"></textarea>
+                    <div id="semSistemas" class="alert alert-info" style="display:none">Nenhum sistema informado.</div>
+
+                    <div class="acoes-tabela">
+                        <button type="button" class="btn btn-primary" onclick="adicionarSistema()">Adicionar sistema</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">3. Resumo estimado por moeda</h3>
+                </div>
+                <div class="panel-body">
+                    <p>Os valores são separados por moeda e não incluem conversão cambial, impostos adicionais ou reajustes.</p>
+                    <ul id="resumoCustos" class="resumo-moeda">
+                        <li>Nenhum custo pago e completo informado.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-warning aviso-ti">
+                <strong>Atenção:</strong> os campos marcados com <strong>*</strong> são os previstos como obrigatórios.
+            </div>
+
+        </form>
+    </div>
+</div>
+
+    <!-- Modal de confirmação de ação (centralizado, com Sim/Cancelar) -->
+    <div class="ajuda-modal ajuda-modal-central" id="modalConfirmar">
+        <div class="ajuda-modal-dialogo">
+            <div class="ajuda-modal-conteudo">
+                <div class="ajuda-modal-cab">
+                    <button type="button" class="ajuda-modal-fechar" onclick="fecharModalConfirmar()">&times;</button>
+                    <h4>Confirmar remoção</h4>
+                </div>
+                <div class="ajuda-modal-corpo">
+                    <p id="textoConfirmar"></p>
+                </div>
+                <div class="ajuda-modal-rodape">
+                    <button type="button" class="ajuda-btn-fechar" onclick="confirmarAcaoSim()">Sim, remover</button>
+                    <button type="button" class="ajuda-btn-fechar ajuda-btn-cinza" onclick="fecharModalConfirmar()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de erros de validação (centralizado na tela) -->
+    <div class="ajuda-modal ajuda-modal-central" id="modalErros">
+        <div class="ajuda-modal-dialogo">
+            <div class="ajuda-modal-conteudo">
+                <div class="ajuda-modal-cab ajuda-cab-erro">
+                    <button type="button" class="ajuda-modal-fechar" onclick="fecharModalErros()">&times;</button>
+                    <h4>Corrija antes de enviar</h4>
+                </div>
+                <div class="ajuda-modal-corpo">
+                    <ul id="listaErros"></ul>
+                </div>
+                <div class="ajuda-modal-rodape">
+                    <button type="button" class="ajuda-btn-fechar" onclick="fecharModalErros()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ajuda / documentação do processo (nível do body) -->
+    <div class="ajuda-modal" id="modalAjuda">
+        <div class="ajuda-modal-dialogo">
+            <div class="ajuda-modal-conteudo">
+                <div class="ajuda-modal-cab">
+                    <button type="button" class="ajuda-modal-fechar" onclick="fecharModalAjuda()">&times;</button>
+                    <h4>Como funciona este processo?</h4>
+                </div>
+                <div class="ajuda-modal-corpo">
+                    <ul>
+                        <li><strong>Quem pode iniciar:</strong> somente integrantes do grupo <strong>MATRIZ</strong>.</li>
+                        <li><strong>Identificação:</strong> Departamento, Solicitante e Data são preenchidos automaticamente a partir do seu usuário — apenas confira.</li>
+                        <li><strong>Sistemas:</strong> adicione uma linha para <strong>cada sistema</strong> utilizado pela área. Informe nome, moeda, valor, frequência de pagamento e a finalidade. Se o sistema for web, preencha também a URL.</li>
+                        <li><strong>Após o envio:</strong> a equipe de TI confere cada sistema registrado e informa o resultado da conferência.</li>
+                        <li><strong>Correção:</strong> se a TI devolver a solicitação, ela volta para você ajustar e reenviar.</li>
+                        <li><strong>Dúvidas:</strong> abra um chamado no <a href="http://10.100.1.55:85/vivaz" target="_blank">Vivaz</a>.</li>
+                    </ul>
+                    <img id="imgAjudaDoc" alt="Ajuda visual do processo">
+                </div>
+                <div class="ajuda-modal-rodape">
+                    <button type="button" class="ajuda-btn-fechar" onclick="fecharModalAjuda()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script type="text/javascript">
+            // === CONFIGURAÇÃO DA AJUDA ===
+            // Publique as imagens no GED (Painel -> Documentos) como
+            // públicas, copie as URLs e cole aqui.
+            // URL_IMAGEM_AJUDA: imagem dentro do modal (vazio = oculta).
+            // URL_LOGO_AJUDA: logo dentro do botão (vazio = texto "K?").
+            var URL_IMAGEM_AJUDA = "";
+            var URL_LOGO_AJUDA = "data:image/png;base64,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"
+                + "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"
+                + "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"
+                + "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"
+                + "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"
+                + "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";
+            if (URL_IMAGEM_AJUDA) {
+                var _imgAjuda = document.getElementById("imgAjudaDoc");
+                _imgAjuda.src = URL_IMAGEM_AJUDA;
+                _imgAjuda.style.display = "block";
+            }
+            if (URL_LOGO_AJUDA) {
+                var _imgLogo = document.getElementById("imgLogoAjuda");
+                _imgLogo.src = URL_LOGO_AJUDA;
+                _imgLogo.style.display = "inline-block";
+                document.getElementById("txtAjudaK").style.display = "none";
+            }
+
+            // Abertura manual, 100% nossa — o fluig-style-guide deste
+            // tenant não tem o CSS de modal do bootstrap, então classes
+            // .modal/.in/backdrop não existem. Tudo é classe própria.
+            function abrirModalAjuda() {
+                var m = document.getElementById("modalAjuda");
+                if (m.className.indexOf(" aberto") == -1) {
+                    m.className += " aberto";
+                }
+                if (document.body.className.indexOf("modal-aberto-trava") == -1) {
+                    document.body.className += " modal-aberto-trava";
+                }
+                if (!document.getElementById("backdropAjuda")) {
+                    var bd = document.createElement("div");
+                    bd.className = "ajuda-backdrop";
+                    bd.id = "backdropAjuda";
+                    bd.onclick = fecharModalAjuda;
+                    document.body.appendChild(bd);
+                }
+            }
+            function fecharModalAjuda() {
+                var m = document.getElementById("modalAjuda");
+                m.className = m.className.replace(" aberto", "");
+                document.body.className =
+                    document.body.className.replace(" modal-aberto-trava", "");
+                var bd = document.getElementById("backdropAjuda");
+                if (bd) bd.parentNode.removeChild(bd);
+            }
+
+            function mostrarErros(erros) {
+                $("#listaErros").empty();
+                $.each(erros, function (i, e) {
+                    $("<li>").text(e).appendTo("#listaErros");
+                });
+                var m = document.getElementById("modalErros");
+                if (m.className.indexOf("aberto") === -1) {
+                    m.className += " aberto";
+                    document.body.className += " modal-aberto-trava";
+                    var bd = document.createElement("div");
+                    bd.className = "ajuda-backdrop";
+                    bd.id = "backdropErros";
+                    bd.onclick = fecharModalErros;
+                    document.body.appendChild(bd);
+                }
+            }
+
+            function fecharModalErros() {
+                var m = document.getElementById("modalErros");
+                m.className = m.className.replace(" aberto", "");
+                document.body.className =
+                    document.body.className.replace(" modal-aberto-trava", "");
+                var bd = document.getElementById("backdropErros");
+                if (bd) bd.parentNode.removeChild(bd);
+            }
+        </script>
+</body>
+</html>
