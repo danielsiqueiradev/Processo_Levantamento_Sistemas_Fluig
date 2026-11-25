@@ -519,15 +519,16 @@
 
         // Serialização final síncrona antes do envio — garante o último estado
         // das linhas mesmo se algum evento de change foi perdido.
-        // Marca o campo com erro: borda vermelha + "Preenchimento incorreto"
+        // Marca o campo com erro: borda vermelha + mensagem embaixo
         // + placeholder com o exemplo do formato esperado.
-        function marcarCampoErro($campo, exemplo) {
+        function marcarCampoErro($campo, exemplo, msg) {
             $campo.addClass("campo-invalido");
             if (exemplo) $campo.attr("placeholder", exemplo);
             var $grupo = $campo.closest(".form-group");
             if ($grupo.length && !$grupo.find(".erro-campo-msg").length) {
                 $grupo.append(
-                    '<span class="erro-campo-msg">Preenchimento incorreto</span>');
+                    '<span class="erro-campo-msg">' +
+                    (msg || "Preenchimento incorreto") + '</span>');
             }
         }
 
@@ -570,35 +571,77 @@
                 var erros = [];
                 $(".campo-invalido").removeClass("campo-invalido");
                 $(".erro-campo-msg").remove();
+
+                // Campos da identificação (preenchidos automaticamente —
+                // se estiverem vazios, algo falhou na carga).
+                if (!$.trim($("[name='departamento']").val() || "")) {
+                    erros.push("Identificação: Departamento não foi preenchido — deveria vir automático; recarregue a página ou fale com a TI.");
+                    marcarCampoErro($("[name='departamento']"), null, "Campo obrigatório");
+                }
+                if (!$.trim($("[name='gestorResponsavel']").val() || "")) {
+                    erros.push("Identificação: Solicitante não foi preenchido.");
+                    marcarCampoErro($("[name='gestorResponsavel']"), null, "Campo obrigatório");
+                }
+                if (!$.trim($("[name='dataLevantamento']").val() || "")) {
+                    erros.push("Identificação: Data do levantamento não foi preenchida.");
+                    marcarCampoErro($("[name='dataLevantamento']"), null, "Campo obrigatório");
+                }
+
+                // Valida TODOS os obrigatórios de cada linha de uma vez —
+                // o modal lista tudo o que falta, não só o primeiro erro.
+                if (obterLinhas().length === 0) {
+                    erros.push("Adicione pelo menos um sistema utilizado pelo departamento.");
+                }
                 obterLinhas().each(function (i) {
                     var $l = $(this), n = i + 1;
+
+                    // obrigatório simples: vazio → erro + marca
+                    function obrig(sel, rotulo, exemplo) {
+                        var $c = $l.find(sel);
+                        if (!$.trim($c.val() || "")) {
+                            erros.push("Sistema " + n + ": campo obrigatório " + rotulo + " não preenchido.");
+                            marcarCampoErro($c, exemplo, "Campo obrigatório");
+                        }
+                    }
+
+                    obrig("[name^='nomeSistema']", "Nome do sistema", "Ex.: RM");
+                    obrig("[name^='fornecedorSistema']", "Fornecedor", "Ex.: TOTVS");
+                    obrig("[name^='finalidadeSistema']", "Finalidade", "Ex.: Controle de folha de pagamento");
+                    obrig("[name^='situacaoSistema']", "Situação", null);
+                    obrig("[name^='aprovacaoDeclarada']", "Aprovação prévia da TI?", null);
+                    obrig("[name^='responsavelContratacao']", "Responsável pela contratação", "Ex.: João Silva");
+
                     var $qtd = $l.find("[name^='quantidadeLicencas']");
                     var qtd = $.trim($qtd.val() || "");
                     if (qtd !== "" && !/^\d+$/.test(qtd)) {
                         erros.push("Sistema " + n + ": Quantidade de licenças aceita somente números inteiros.");
                         marcarCampoErro($qtd, "Ex.: 10");
                     }
+
                     var tipo = $l.find("[name^='tipoSistema']:checked").val() || "";
                     if (tipo === "") {
                         erros.push("Sistema " + n + ": selecione o Tipo do sistema (Local ou Web).");
-                        marcarCampoErro($l.find(".tipo-sistema-opcoes"), null);
+                        marcarCampoErro($l.find(".tipo-sistema-opcoes"), null, "Campo obrigatório");
                     }
+
                     var $url = $l.find("[name^='urlSistema']");
                     var url = $.trim($url.val() || "");
                     if (tipo === "web" && url !== "" && !urlValida(url)) {
                         erros.push("Sistema " + n + ": URL inválida — informe um link válido (ex.: www.sistema.com.br)");
                         marcarCampoErro($url, "www.sistema.com.br");
                     }
+
                     var $dc = $l.find("[name^='dataContratacao']");
                     var dc = $.trim($dc.val() || "");
                     if (dc !== "" && !dataContratacaoValida(dc)) {
                         erros.push("Sistema " + n + ": Data da contratação inválida — use dd/mm/aaaa com uma data real.");
-                        marcarCampoErro($dc, "dd/mm/aaaa");
+                        marcarCampoErro($dc, "Ex.: 15/03/2024");
                     }
-                    if ($l.find("[name^='situacaoSistema']").val() === "pago"
-                            && !$l.find("[name^='moedaSistema']").val()) {
-                        erros.push("Sistema " + n + ": sistema Pago exige a seleção da Moeda.");
-                        marcarCampoErro($l.find("[name^='moedaSistema']"), null);
+
+                    if ($l.find("[name^='situacaoSistema']").val() === "pago") {
+                        obrig("[name^='moedaSistema']", "Moeda", null);
+                        obrig("[name^='valorCobranca']", "Valor total por cobrança", "Ex.: 1.234,56");
+                        obrig("[name^='frequenciaPagamento']", "Frequência de pagamento", null);
                     }
                 });
                 if (erros.length) {
