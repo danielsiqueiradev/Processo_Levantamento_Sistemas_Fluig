@@ -17,7 +17,6 @@ function displayFields(form, customHTML) {
         for (var i = 0; i < indexes.length; i++) {
             var idx = indexes[i];
             form.setEnabled("resultadoConferenciaTI" + idx, false);
-            form.setEnabled("referenciaValidacaoTI" + idx, false);
             form.setEnabled("encaminhamentoTI" + idx, false);
             form.setEnabled("parecerTI" + idx, false);
             form.setEnabled("parecerInterno" + idx, false);
@@ -27,7 +26,7 @@ function displayFields(form, customHTML) {
         customHTML.append("<script>");
         customHTML.append("$(document).ready(function() {");
         customHTML.append("  function travarCamposTI() {");
-        customHTML.append("    $(\"[name^='resultadoConferenciaTI'], [name^='referenciaValidacaoTI'], [name^='encaminhamentoTI'], [name^='parecerTI'], [name^='parecerInterno']\").prop('disabled', true);");
+        customHTML.append("    $(\"[name^='resultadoConferenciaTI'], [name^='encaminhamentoTI'], [name^='parecerTI'], [name^='parecerInterno']\").prop('disabled', true);");
         customHTML.append("  }");
         customHTML.append("  travarCamposTI();");
         customHTML.append("  $(document).on('click', \"button[onclick*='adicionarSistema']\", function() { setTimeout(travarCamposTI, 100); });");
@@ -72,7 +71,7 @@ function displayFields(form, customHTML) {
         customHTML.append("$(document).ready(function() {");
         customHTML.append("  setTimeout(function() {");
         customHTML.append("    $('#tb_sistemas input, #tb_sistemas select, #tb_sistemas textarea').each(function() {");
-        customHTML.append("      if (!/^(resultadoConferenciaTI|referenciaValidacaoTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) $(this).prop('disabled', true);");
+        customHTML.append("      if (!/^(resultadoConferenciaTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) $(this).prop('disabled', true);");
         customHTML.append("    });");
         customHTML.append("  }, 300);");
         customHTML.append("});");
@@ -152,7 +151,7 @@ var CAMPOS_SISTEMA = ["nomeSistema", "fornecedorSistema", "quantidadeLicencas",
                       "custoMensalEstimado", "custoAnualEstimado",
                       "responsavelContratacao", "dataContratacao",
                       "aprovacaoDeclarada", "observacoesArea",
-                      "resultadoConferenciaTI", "referenciaValidacaoTI",
+                      "resultadoConferenciaTI",
                       "encaminhamentoTI", "parecerTI", "parecerInterno"];
 
 // Monta o JSON das linhas salvas (chaves = nomes base dos campos).

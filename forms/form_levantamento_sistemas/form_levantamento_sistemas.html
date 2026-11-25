@@ -202,26 +202,21 @@
             atualizarResumo();
         }
 
-        function atualizarResumo() {
+        function totaisResumo(linhas) {
             var totais = {};
-            var $resumo = $("#resumoCustos");
-
-            obterLinhas().each(function () {
-                var $linha = $(this);
-                var situacao = $linha.find("[name^='situacaoSistema']").val();
-                var moeda = $linha.find("[name^='moedaSistema']").val();
-                var frequencia = $linha.find("[name^='frequenciaPagamento']").val();
-                var valor = lerValor($linha.find("[name^='valorCobranca']").val());
-
-                var meses = MESES_FREQUENCIA[frequencia];
-
-                if (situacao !== "pago" || !moeda || valor === null || !meses) return;
-
-                if (!totais[moeda]) totais[moeda] = { mensal: 0, anual: 0 };
-                totais[moeda].mensal += valor / meses;
-                totais[moeda].anual += valor * 12 / meses;
+            linhas.forEach(function (d) {
+                var meses = MESES_FREQUENCIA[d.frequenciaPagamento];
+                var valor = lerValor(d.valorCobranca);
+                if (d.situacaoSistema !== "pago" || !d.moedaSistema || valor === null || !meses) return;
+                if (!totais[d.moedaSistema]) totais[d.moedaSistema] = { mensal: 0, anual: 0 };
+                totais[d.moedaSistema].mensal += valor / meses;
+                totais[d.moedaSistema].anual += valor * 12 / meses;
             });
+            return totais;
+        }
 
+        function renderResumo(totais) {
+            var $resumo = $("#resumoCustos");
             $resumo.empty();
             var moedas = Object.keys(totais);
 
@@ -236,6 +231,26 @@
                 var texto = moeda + " — mensal: " + simbolo + " " + formatarValor(totais[moeda].mensal) + " | anual: " + simbolo + " " + formatarValor(totais[moeda].anual);
                 $resumo.append($("<li>").text(texto));
             });
+        }
+
+        function atualizarResumo() {
+            var linhas = [];
+            obterLinhas().each(function () {
+                var $linha = $(this);
+                linhas.push({
+                    situacaoSistema: $linha.find("[name^='situacaoSistema']").val(),
+                    moedaSistema: $linha.find("[name^='moedaSistema']").val(),
+                    frequenciaPagamento: $linha.find("[name^='frequenciaPagamento']").val(),
+                    valorCobranca: $linha.find("[name^='valorCobranca']").val()
+                });
+            });
+            renderResumo(totaisResumo(linhas));
+        }
+
+        // Modo consulta: sem inputs na tela — o resumo sai direto do
+        // sistemasJson salvo.
+        function atualizarResumoView(linhasJson) {
+            renderResumo(totaisResumo(linhasJson || []));
         }
 
         // Linha com todos os campos vazios não é dado — é lixo (de gravações
@@ -296,7 +311,7 @@
             responsavelContratacao: "Responsável pela contratação", dataContratacao: "Data da contratação",
             aprovacaoDeclarada: "Aprovação prévia da TI?",
             observacoesArea: "Observações da área", resultadoConferenciaTI: "Resultado da conferência",
-            referenciaValidacaoTI: "Referência da validação", encaminhamentoTI: "Encaminhamento",
+            encaminhamentoTI: "Encaminhamento",
             parecerTI: "Parecer da TI", parecerInterno: "Parecer interno"
         };
 
@@ -322,7 +337,7 @@
             "observacoesArea"];
         // parecerInterno fica de fora de propósito: a consulta não distingue
         // TI de solicitante, então o campo interno só existe na etapa 5.
-        var CAMPOS_VIEW_TI = ["resultadoConferenciaTI", "referenciaValidacaoTI",
+        var CAMPOS_VIEW_TI = ["resultadoConferenciaTI",
             "encaminhamentoTI", "parecerTI"];
 
         function valorCampoView(campo, dados) {
@@ -647,7 +662,7 @@
         // e revela o Parecer interno (só a TI vê esse campo).
         function travarCamposGestor() {
             $("#tb_sistemas input, #tb_sistemas select, #tb_sistemas textarea").each(function () {
-                if (!/^(resultadoConferenciaTI|referenciaValidacaoTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) {
+                if (!/^(resultadoConferenciaTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) {
                     $(this).prop("disabled", true);
                 }
             });
@@ -689,6 +704,7 @@
                 // determinístico. O re-render tardio cobre a plataforma
                 // injetando linhas depois do ready.
                 renderizarSistemasView(salvos);
+                atualizarResumoView(salvos);
                 $(".acoes-tabela").hide();
                 setTimeout(function () { renderizarSistemasView(sistemasSalvos()); }, 800);
                 setTimeout(function () { renderizarSistemasView(sistemasSalvos()); }, 2500);
@@ -999,12 +1015,6 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>Referência da validação</label>
-                                                    <input type="text" class="form-control" name="referenciaValidacaoTI" id="referenciaValidacaoTI" maxlength="250">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
                                                     <label>Encaminhamento</label>
                                                     <select class="form-control" name="encaminhamentoTI" id="encaminhamentoTI">
                                                         <option value="">Selecione</option>
@@ -1061,7 +1071,7 @@
                 <div class="panel-body">
                     <p>Os valores são separados por moeda e não incluem conversão cambial, impostos adicionais ou reajustes.</p>
                     <ul id="resumoCustos" class="resumo-moeda">
-                        <li>Nenhum custo informado.</li>
+                        <li>Nenhum custo pago e completo informado.</li>
                     </ul>
                 </div>
             </div>
