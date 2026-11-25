@@ -1,0 +1,989 @@
+<list>
+  <ProcessDefinition>
+    <processDefinitionPK>
+      <companyId>1</companyId>
+      <processId>levantamento_sistemas</processId>
+    </processDefinitionPK>
+    <processDescription>levantamento_sistemas</processDescription>
+    <instruction></instruction>
+    <active>true</active>
+    <publicProcess>true</publicProcess>
+    <volumeId>Default</volumeId>
+    <categoryId>TI</categoryId>
+    <managerEngineAllocationId>Usuário</managerEngineAllocationId>
+    <managerEngineAllocationConfiguration>&lt;AssignmentController&gt;&lt;User&gt;d6a8f615-4bdd-47fb-88bd-1abd5bead834&lt;/User&gt;&lt;/AssignmentController&gt;</managerEngineAllocationConfiguration>
+    <snapshotFrequency>0</snapshotFrequency>
+    <baseDay>0</baseDay>
+    <baseMonth>0</baseMonth>
+    <periodId>Default</periodId>
+    <uniqueCardVersion>false</uniqueCardVersion>
+    <keyWord></keyWord>
+    <complementsLevel>1</complementsLevel>
+    <notifyRequisitionerComplements>true</notifyRequisitionerComplements>
+    <notifyManagerComplements>false</notifyManagerComplements>
+    <deadlineTime>0</deadlineTime>
+    <warningDeadlineTime>0</warningDeadlineTime>
+    <notifyAuthorityComplements>true</notifyAuthorityComplements>
+  </ProcessDefinition>
+  <ProcessDefinitionVersion>
+    <processDefinitionVersionPK>
+      <companyId>1</companyId>
+      <processId>levantamento_sistemas</processId>
+      <version>15</version>
+    </processDefinitionVersionPK>
+    <versionDescription></versionDescription>
+    <formId>266623</formId>
+    <formIdV2>0</formIdV2>
+    <editionMode>true</editionMode>
+    <updateAttachmentsVersion>false</updateAttachmentsVersion>
+    <controlsAttachmentsSecurity>false</controlsAttachmentsSecurity>
+    <active>true</active>
+    <blockedVersion>false</blockedVersion>
+    <counterSign>false</counterSign>
+    <openInstances>0</openInstances>
+    <bpmnVersion>2</bpmnVersion>
+    <processStates/>
+    <favorito>false</favorito>
+    <inheritFormSecurity>false</inheritFormSecurity>
+    <mobileReady>false</mobileReady>
+  </ProcessDefinitionVersion>
+  <list>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>4</sequence>
+      </processStatePK>
+      <stateName>Início</stateName>
+      <stateDescription>Início</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId>Grupo</engineAllocationId>
+      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;Group&gt;MATRIZ&lt;/Group&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
+      <selectColleague>1</selectColleague>
+      <initialState>true</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>150</positionX>
+      <positionY>82</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>10</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>5</sequence>
+      </processStatePK>
+      <stateName>Conferência TI</stateName>
+      <stateDescription>Conferência TI</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId>Pool Grupo</engineAllocationId>
+      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;Group&gt;TI&lt;/Group&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>400</positionX>
+      <positionY>210</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>80</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>13</sequence>
+      </processStatePK>
+      <stateName>Corrigir Informações</stateName>
+      <stateDescription>Corrigir Informações</stateDescription>
+      <instruction></instruction>
+      <deadlineTime>0</deadlineTime>
+      <deadlineFieldName></deadlineFieldName>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId>Executor Atividade</engineAllocationId>
+      <engineAllocationConfiguration>&lt;AssignmentController&gt;&lt;BaseActivity&gt;4&lt;/BaseActivity&gt;&lt;Returns&gt;Last&lt;/Returns&gt;&lt;/AssignmentController&gt;</engineAllocationConfiguration>
+      <selectColleague>1</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>3600</allowanceAuthorityTime>
+      <frequenceAuthorityTime>3600</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>390</positionX>
+      <positionY>60</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>0</stateType>
+      <bpmnType>80</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <noticeExpirationAuthorityTime>0</noticeExpirationAuthorityTime>
+      <noticeExpirationRequisitionerTime>0</noticeExpirationRequisitionerTime>
+      <noticeExpirationManagerTime>0</noticeExpirationManagerTime>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+      <executionType>0</executionType>
+    </ProcessState>
+    <ProcessState>
+      <processStatePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>9</sequence>
+      </processStatePK>
+      <stateName>Fim</stateName>
+      <stateDescription>Fim</stateDescription>
+      <instruction>Atividade final do processo</instruction>
+      <deadlineTime>0</deadlineTime>
+      <joint>false</joint>
+      <agreementPercentage>0</agreementPercentage>
+      <engineAllocationId></engineAllocationId>
+      <engineAllocationConfiguration></engineAllocationConfiguration>
+      <selectColleague>0</selectColleague>
+      <initialState>false</initialState>
+      <notifyAuthorityDelay>true</notifyAuthorityDelay>
+      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
+      <allowanceAuthorityTime>0</allowanceAuthorityTime>
+      <frequenceAuthorityTime>1</frequenceAuthorityTime>
+      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
+      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
+      <transferAttachments>false</transferAttachments>
+      <subProcessId></subProcessId>
+      <formFolder>0</formFolder>
+      <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
+      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
+      <automatic>false</automatic>
+      <positionX>620</positionX>
+      <positionY>211</positionY>
+      <forecastedEffortType>0</forecastedEffortType>
+      <forecastedEffort>0</forecastedEffort>
+      <notifyManagerFollowUp>false</notifyManagerFollowUp>
+      <notifyManagerDelay>false</notifyManagerDelay>
+      <allowanceManagerTime>0</allowanceManagerTime>
+      <frequenceManagerTime>0</frequenceManagerTime>
+      <inhibitTransfer>false</inhibitTransfer>
+      <periodId></periodId>
+      <stateType>6</stateType>
+      <bpmnType>60</bpmnType>
+      <signalId>0</signalId>
+      <counterSign>false</counterSign>
+      <openInstances>0</openInstances>
+      <destinationStates/>
+      <digitalSignature>false</digitalSignature>
+    </ProcessState>
+  </list>
+  <list/>
+  <list>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <linkSequence>6</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>4</initialStateSequence>
+      <finalStateSequence>5</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <linkSequence>14</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>5</initialStateSequence>
+      <finalStateSequence>13</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <linkSequence>16</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>13</initialStateSequence>
+      <finalStateSequence>5</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+    <ProcessLink>
+      <processLinkPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <linkSequence>17</linkSequence>
+      </processLinkPK>
+      <actionLabel></actionLabel>
+      <returnPermited>false</returnPermited>
+      <initialStateSequence>5</initialStateSequence>
+      <finalStateSequence>9</finalStateSequence>
+      <returnLabel></returnLabel>
+      <name></name>
+      <automaticLink>false</automaticLink>
+      <defaultLink>false</defaultLink>
+      <type>0</type>
+    </ProcessLink>
+  </list>
+  <list/>
+  <list>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>validateForm</eventId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function validateForm(form) {&#xd;
+    var activity = Number(getValue(&quot;WKNumState&quot;));&#xd;
+    var errors = [];&#xd;
+    var indexes = obterIndexesSistemas(form);&#xd;
+&#xd;
+    // Valida o grupo na abertura/início.&#xd;
+    if (activity == 0 || activity == 4) {&#xd;
+        try {&#xd;
+            var usuarioId = String(getValue(&quot;WKUser&quot;));&#xd;
+&#xd;
+            var cMembro = DatasetFactory.createConstraint(&#xd;
+                &quot;colleagueGroupPK.colleagueId&quot;,&#xd;
+                usuarioId,&#xd;
+                usuarioId,&#xd;
+                ConstraintType.MUST&#xd;
+            );&#xd;
+&#xd;
+            // Sem constraint de grupo: busca todos os grupos do usuário e&#xd;
+            // compara em minúsculo — o código do grupo pode divergir de&#xd;
+            // caixa entre o que se vê no painel e o que está gravado.&#xd;
+            var dsGrupo = DatasetFactory.getDataset(&#xd;
+                &quot;colleagueGroup&quot;,&#xd;
+                null,&#xd;
+                [cMembro],&#xd;
+                null&#xd;
+            );&#xd;
+&#xd;
+            var membro = false;&#xd;
+            var gidsVistos = [];&#xd;
+            if (dsGrupo != null) {&#xd;
+                // Acha a coluna de grupo varrendo o array — String(array&#xd;
+                // Java) vira &quot;[Ljava.lang.String;@...&quot; e o indexOf falha.&#xd;
+                var colunasG = dsGrupo.columnsName;&#xd;
+                var colGid = &quot;groupId&quot;;&#xd;
+                if (colunasG != null) {&#xd;
+                    for (var c = 0; c &lt; colunasG.length; c++) {&#xd;
+                        if (String(colunasG[c]).toLowerCase().indexOf(&quot;groupid&quot;) != -1) {&#xd;
+                            colGid = colunasG[c];&#xd;
+                            break;&#xd;
+                        }&#xd;
+                    }&#xd;
+                }&#xd;
+                for (var g = 0; g &lt; dsGrupo.rowsCount; g++) {&#xd;
+                    var gid = String(dsGrupo.getValue(g, colGid) || &quot;&quot;);&#xd;
+                    gidsVistos.push(gid);&#xd;
+                    if (gid.toLowerCase() == &quot;matriz&quot;) { membro = true; break; }&#xd;
+                }&#xd;
+            }&#xd;
+&#xd;
+            if (!membro) {&#xd;
+                var vistos = &quot;&quot;;&#xd;
+                for (var v = 0; v &lt; gidsVistos.length; v++) {&#xd;
+                    vistos += (v == 0 ? &quot;&quot; : &quot;, &quot;) + gidsVistos[v];&#xd;
+                }&#xd;
+                errors.push(&#xd;
+                    &quot;Somente integrantes do grupo Matriz &quot; +&#xd;
+                    &quot;podem iniciar este levantamento. &quot; +&#xd;
+                    &quot;[grupos do usuario: &quot; + (vistos || &quot;nenhum&quot;) + &quot;]&quot;&#xd;
+                );&#xd;
+            }&#xd;
+        } catch (e) {&#xd;
+            errors.push(&#xd;
+                &quot;Não foi possível validar a participação no grupo &quot; +&#xd;
+                &quot;Matriz. Tente novamente ou contate o suporte.&quot;&#xd;
+            );&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    // Validação das etapas do Gestor: novo, início e correção.&#xd;
+    if (activity == 0 || activity == 4 || activity == 13) {&#xd;
+        if (isEmpty(form.getValue(&quot;departamento&quot;))) {&#xd;
+            errors.push(&#xd;
+                &quot;Informe o Departamento. Se o preenchimento automático &quot; +&#xd;
+                &quot;falhou, verifique a consulta do RM.&quot;&#xd;
+            );&#xd;
+        }&#xd;
+&#xd;
+        if (isEmpty(form.getValue(&quot;gestorResponsavel&quot;))) {&#xd;
+            errors.push(&quot;Informe o Solicitante.&quot;);&#xd;
+        }&#xd;
+&#xd;
+        if (isEmpty(form.getValue(&quot;dataLevantamento&quot;))) {&#xd;
+            errors.push(&quot;Informe a Data do levantamento.&quot;);&#xd;
+        }&#xd;
+&#xd;
+        if (indexes.length == 0) {&#xd;
+            errors.push(&#xd;
+                &quot;Adicione pelo menos um sistema utilizado pelo departamento.&quot;&#xd;
+            );&#xd;
+        } else {&#xd;
+            for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+                var idx = indexes[i];&#xd;
+                var linha = i + 1;&#xd;
+&#xd;
+                if (isEmpty(form.getValue(&quot;nomeSistema&quot; + idx))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha + &quot; — campo obrigatório: Nome do sistema&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                if (isEmpty(form.getValue(&quot;fornecedorSistema&quot; + idx))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha + &quot; — campo obrigatório: Fornecedor&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                if (isEmpty(form.getValue(&quot;finalidadeSistema&quot; + idx))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha + &quot; — campo obrigatório: Finalidade&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                var qtd = form.getValue(&quot;quantidadeLicencas&quot; + idx);&#xd;
+                if (!isEmpty(qtd) &amp;&amp; !/^\d+$/.test(String(qtd))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — Quantidade de licenças: use somente números inteiros (sem vírgula ou ponto)&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                var tipo = String(form.getValue(&quot;tipoSistema&quot; + idx) || &quot;&quot;);&#xd;
+                var url = String(form.getValue(&quot;urlSistema&quot; + idx) || &quot;&quot;);&#xd;
+                if (isEmpty(tipo)) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — campo obrigatório: Tipo do sistema (Local ou Web)&quot;&#xd;
+                    );&#xd;
+                } else if (tipo == &quot;web&quot; &amp;&amp; !isEmpty(url) &amp;&amp; !urlValida(url)) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — URL inválida: use o formato www.sistema.com ou www.sistema.com.br&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                var dataContr = form.getValue(&quot;dataContratacao&quot; + idx);&#xd;
+                if (!isEmpty(dataContr) &amp;&amp; !dataContratacaoValida(String(dataContr))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — Data da contratação inválida: use dd/mm/aaaa com uma data real&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+&#xd;
+                var situacao = form.getValue(&quot;situacaoSistema&quot; + idx);&#xd;
+&#xd;
+                if (isEmpty(situacao)) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — campo obrigatório: Situação (Pago ou Gratuito)&quot;&#xd;
+                    );&#xd;
+                } else if (String(situacao) == &quot;pago&quot;) {&#xd;
+                    if (isEmpty(form.getValue(&quot;moedaSistema&quot; + idx))) {&#xd;
+                        errors.push(&#xd;
+                            &quot;Sistema &quot; + linha + &quot; — campo obrigatório: Moeda&quot;&#xd;
+                        );&#xd;
+                    }&#xd;
+&#xd;
+                    if (isEmpty(form.getValue(&quot;valorCobranca&quot; + idx))) {&#xd;
+                        errors.push(&#xd;
+                            &quot;Sistema &quot; + linha +&#xd;
+                            &quot; — campo obrigatório: Valor total por cobrança&quot;&#xd;
+                        );&#xd;
+                    }&#xd;
+&#xd;
+                    if (&#xd;
+                        isEmpty(&#xd;
+                            form.getValue(&quot;frequenciaPagamento&quot; + idx)&#xd;
+                        )&#xd;
+                    ) {&#xd;
+                        errors.push(&#xd;
+                            &quot;Sistema &quot; + linha +&#xd;
+                            &quot; — campo obrigatório: Frequência de pagamento&quot;&#xd;
+                        );&#xd;
+                    }&#xd;
+                }&#xd;
+&#xd;
+                if (isEmpty(form.getValue(&quot;aprovacaoDeclarada&quot; + idx))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — campo obrigatório: Aprovação prévia da TI?&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+                if (isEmpty(form.getValue(&quot;responsavelContratacao&quot; + idx))) {&#xd;
+                    errors.push(&#xd;
+                        &quot;Sistema &quot; + linha +&#xd;
+                        &quot; — campo obrigatório: Responsável pela contratação&quot;&#xd;
+                    );&#xd;
+                }&#xd;
+            }&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    // Validação da etapa da TI. Os campos do gestor chegam disabled e não&#xd;
+    // entram no submit — a fonte confiável das linhas é o sistemasJson,&#xd;
+    // campo registrado e sempre habilitado.&#xd;
+    if (activity == 5) {&#xd;
+        var linhasJson = lerSistemasJson(form);&#xd;
+        var totalSistemas = linhasJson.length &gt; 0&#xd;
+            ? linhasJson.length&#xd;
+            : indexes.length;&#xd;
+        if (totalSistemas == 0) {&#xd;
+            errors.push(&quot;Nenhum sistema informado na solicitação.&quot;);&#xd;
+        }&#xd;
+        var temPendente = false;&#xd;
+        for (var j = 0; j &lt; totalSistemas; j++) {&#xd;
+            var res = linhasJson.length &gt; 0&#xd;
+                ? linhasJson[j].resultadoConferenciaTI&#xd;
+                : form.getValue(&quot;resultadoConferenciaTI&quot; + indexes[j]);&#xd;
+            if (isEmpty(res)) {&#xd;
+                errors.push(&#xd;
+                    &quot;Sistema &quot; + (j + 1) +&#xd;
+                    &quot; — campo obrigatório: Resultado da conferência da TI&quot;&#xd;
+                );&#xd;
+            }&#xd;
+            if (String(res) == &quot;pendente&quot;) temPendente = true;&#xd;
+        }&#xd;
+&#xd;
+        // Sistema pendente de esclarecimento = o movimento tem que ser a&#xd;
+        // devolução para o solicitante (estado 13), nunca o encerramento.&#xd;
+        var destino = String(getValue(&quot;WKNextState&quot;) || &quot;&quot;);&#xd;
+        if (temPendente &amp;&amp; destino != &quot;13&quot;) {&#xd;
+            errors.push(&#xd;
+                &quot;Há sistema marcado como &apos;Pendente de esclarecimento&apos; — &quot; +&#xd;
+                &quot;a solicitação deve ser devolvida ao solicitante &quot; +&#xd;
+                &quot;(Corrigir Informações), não encerrada.&quot;&#xd;
+            );&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    if (errors.length &gt; 0) {&#xd;
+        throw &quot;\nNão foi possível enviar — corrija os itens abaixo:\n\n• &quot; +&#xd;
+            errors.join(&quot;\n• &quot;);&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+function isEmpty(valor) {&#xd;
+    // Compatível também com valores retornados como String Java.&#xd;
+    return valor == null ||&#xd;
+        String(valor).replace(/^\s+|\s+$/g, &quot;&quot;) == &quot;&quot;;&#xd;
+}&#xd;
+&#xd;
+// Exige www.algumacoisa.com ou .com.br (protocolo opcional).&#xd;
+function urlValida(u) {&#xd;
+    return /^(https?:\/\/)?www\.[\w-]+(\.[\w-]+)*\.(com\.br|com)(\/\S*)?$/i&#xd;
+        .test(String(u));&#xd;
+}&#xd;
+&#xd;
+// dd/mm/aaaa com data de verdade — rejeita 30/02, 31/04 etc.&#xd;
+function dataContratacaoValida(s) {&#xd;
+    var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);&#xd;
+    if (!m) return false;&#xd;
+    var d = parseInt(m[1], 10), mo = parseInt(m[2], 10), a = parseInt(m[3], 10);&#xd;
+    if (mo &lt; 1 || mo &gt; 12 || d &lt; 1 || d &gt; 31) return false;&#xd;
+    var bissexto = a % 4 == 0 &amp;&amp; (a % 100 != 0 || a % 400 == 0);&#xd;
+    var dias = [31, bissexto ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];&#xd;
+    return d &lt;= dias[mo - 1];&#xd;
+}&#xd;
+&#xd;
+// getChildrenIndexes pode não enxergar a tabela dependendo do metadata&#xd;
+// publicado; nesse caso detecta as linhas varrendo os campos N recebidos.&#xd;
+function obterIndexesSistemas(form) {&#xd;
+    var idxFluig = form.getChildrenIndexes(&quot;tb_sistemas&quot;);&#xd;
+    var indexes = [];&#xd;
+    for (var k = 0; k &lt; idxFluig.length; k++) {&#xd;
+        indexes.push(idxFluig[k]);&#xd;
+    }&#xd;
+    if (indexes.length &gt; 0) return indexes;&#xd;
+&#xd;
+    var campos = [&quot;nomeSistema&quot;, &quot;fornecedorSistema&quot;, &quot;finalidadeSistema&quot;,&#xd;
+                  &quot;situacaoSistema&quot;, &quot;quantidadeLicencas&quot;, &quot;moedaSistema&quot;,&#xd;
+                  &quot;valorCobranca&quot;, &quot;frequenciaPagamento&quot;, &quot;aprovacaoDeclarada&quot;,&#xd;
+                  &quot;responsavelContratacao&quot;, &quot;dataContratacao&quot;,&#xd;
+                  &quot;tipoSistema&quot;, &quot;urlSistema&quot;, &quot;observacoesArea&quot;];&#xd;
+    for (var i = 1; i &lt;= 50; i++) {&#xd;
+        for (var c = 0; c &lt; campos.length; c++) {&#xd;
+            if (!isEmpty(form.getValue(campos[c] + i))) {&#xd;
+                indexes.push(i);&#xd;
+                break;&#xd;
+            }&#xd;
+        }&#xd;
+    }&#xd;
+&#xd;
+    // Linha-template ( sem número) preenchida mas não indexada.&#xd;
+    if (indexes.length == 0 &amp;&amp; !isEmpty(form.getValue(&quot;nomeSistema&quot;))) {&#xd;
+        indexes.push(&quot;&quot;);&#xd;
+    }&#xd;
+    return indexes;&#xd;
+}&#xd;
+&#xd;
+// Lê as linhas do campo registrado sistemasJson — sempre habilitado e&#xd;
+// submetido, ao contrário dos campos dinâmicos disabled na etapa TI.&#xd;
+function lerSistemasJson(form) {&#xd;
+    var bruto = form.getValue(&quot;sistemasJson&quot;);&#xd;
+    if (isEmpty(bruto)) return [];&#xd;
+    var dados;&#xd;
+    try { dados = JSON.parse(bruto); }&#xd;
+    catch (e) {&#xd;
+        try { dados = eval(&quot;(&quot; + bruto + &quot;)&quot;); } catch (e2) { return []; }&#xd;
+    }&#xd;
+    return dados instanceof Array ? dados : [];&#xd;
+}
+</eventDescription>
+      <managedScript>false</managedScript>
+    </WorkflowProcessEvent>
+    <WorkflowProcessEvent>
+      <workflowProcessEventPK>
+        <companyId>1</companyId>
+        <eventId>displayFields</eventId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+      </workflowProcessEventPK>
+      <eventDescription>function displayFields(form, customHTML) {&#xd;
+    var activity = getValue(&quot;WKNumState&quot;);&#xd;
+    var indexes = obterIndexesSistemas(form);&#xd;
+&#xd;
+    // Entrega as linhas salvas pro JS do form reconstruir a tabela&#xd;
+    // (campos flat nomeSistema1, ... — a plataforma não os renderiza sozinha)&#xd;
+    emitirSistemasSalvos(form, customHTML);&#xd;
+&#xd;
+    // Etapas do Gestor: 0 (novo), 4 (Início) e 13 (Corrigir Informações)&#xd;
+    if (activity == 0 || activity == 4 || activity == 13) {&#xd;
+        // Preenche departamento/gestor no servidor (não depende de WCMAPI)&#xd;
+        var diagDpt = preencherDepartamento(form);&#xd;
+        log.info(&quot;preencherDepartamento: &quot; + diagDpt);&#xd;
+        customHTML.append(&quot;&lt;script&gt;console.log(&apos;[dpt-srv]&apos;, &quot; + jsonStr(diagDpt) + &quot;);&lt;/script&gt;&quot;);&#xd;
+&#xd;
+        // Trava campos da TI nas linhas que já existem&#xd;
+        for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+            var idx = indexes[i];&#xd;
+            form.setEnabled(&quot;resultadoConferenciaTI&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;referenciaValidacaoTI&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;encaminhamentoTI&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;parecerTI&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;parecerInterno&quot; + idx, false);&#xd;
+        }&#xd;
+&#xd;
+        // Garante que linhas novas adicionadas na hora também venham com a TI travada&#xd;
+        customHTML.append(&quot;&lt;script&gt;&quot;);&#xd;
+        customHTML.append(&quot;$(document).ready(function() {&quot;);&#xd;
+        customHTML.append(&quot;  function travarCamposTI() {&quot;);&#xd;
+        customHTML.append(&quot;    $(\&quot;[name^=&apos;resultadoConferenciaTI&apos;], [name^=&apos;referenciaValidacaoTI&apos;], [name^=&apos;encaminhamentoTI&apos;], [name^=&apos;parecerTI&apos;], [name^=&apos;parecerInterno&apos;]\&quot;).prop(&apos;disabled&apos;, true);&quot;);&#xd;
+        customHTML.append(&quot;  }&quot;);&#xd;
+        customHTML.append(&quot;  travarCamposTI();&quot;);&#xd;
+        customHTML.append(&quot;  $(document).on(&apos;click&apos;, \&quot;button[onclick*=&apos;adicionarSistema&apos;]\&quot;, function() { setTimeout(travarCamposTI, 100); });&quot;);&#xd;
+        customHTML.append(&quot;});&quot;);&#xd;
+        customHTML.append(&quot;&lt;/script&gt;&quot;);&#xd;
+    }&#xd;
+&#xd;
+    // Etapa da TI: 5 (Conferência TI)&#xd;
+    if (activity == 5) {&#xd;
+        // Trava identificação do departamento&#xd;
+        form.setEnabled(&quot;departamento&quot;, false);&#xd;
+        form.setEnabled(&quot;gestorResponsavel&quot;, false);&#xd;
+        form.setEnabled(&quot;dataLevantamento&quot;, false);&#xd;
+&#xd;
+        // Trava os dados dos sistemas preenchidos pelo gestor&#xd;
+        for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+            var idx = indexes[i];&#xd;
+            form.setEnabled(&quot;nomeSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;fornecedorSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;quantidadeLicencas&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;finalidadeSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;situacaoSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;moedaSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;valorCobranca&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;frequenciaPagamento&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;responsavelContratacao&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;dataContratacao&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;aprovacaoDeclarada&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;tipoSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;urlSistema&quot; + idx, false);&#xd;
+            form.setEnabled(&quot;observacoesArea&quot; + idx, false);&#xd;
+        }&#xd;
+&#xd;
+        // Esconde os botões de adicionar e remover sistema na etapa da TI&#xd;
+        customHTML.append(&quot;&lt;style&gt;&quot;);&#xd;
+        customHTML.append(&quot;  .acoes-tabela, button[onclick*=&apos;removerSistema&apos;] { display: none !important; }&quot;);&#xd;
+        customHTML.append(&quot;&lt;/style&gt;&quot;);&#xd;
+&#xd;
+        // As linhas são recriadas dinamicamente no browser; o setEnabled não&#xd;
+        // as alcança. Trava client-side tudo que não for campo da TI.&#xd;
+        customHTML.append(&quot;&lt;script&gt;&quot;);&#xd;
+        customHTML.append(&quot;$(document).ready(function() {&quot;);&#xd;
+        customHTML.append(&quot;  setTimeout(function() {&quot;);&#xd;
+        customHTML.append(&quot;    $(&apos;#tb_sistemas input, #tb_sistemas select, #tb_sistemas textarea&apos;).each(function() {&quot;);&#xd;
+        customHTML.append(&quot;      if (!/^(resultadoConferenciaTI|referenciaValidacaoTI|encaminhamentoTI|parecerTI|parecerInterno)/.test(this.name)) $(this).prop(&apos;disabled&apos;, true);&quot;);&#xd;
+        customHTML.append(&quot;    });&quot;);&#xd;
+        customHTML.append(&quot;  }, 300);&quot;);&#xd;
+        customHTML.append(&quot;});&quot;);&#xd;
+        customHTML.append(&quot;&lt;/script&gt;&quot;);&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+// Busca o e-mail do usuário logado (WKUser -&gt; colleague.mail) e preenche&#xd;
+// departamento/gestor via DS_CONSULTA_DPT. Retorna um diagnóstico em texto&#xd;
+// (impresso no console do navegador via customHTML e no server.log via log.info).&#xd;
+function preencherDepartamento(form) {&#xd;
+    try {&#xd;
+        var usuarioId = String(getValue(&quot;WKUser&quot;));&#xd;
+&#xd;
+        var cCol = DatasetFactory.createConstraint(&#xd;
+            &quot;colleaguePK.colleagueId&quot;, usuarioId, usuarioId, ConstraintType.MUST&#xd;
+        );&#xd;
+        var dsCol = DatasetFactory.getDataset(&quot;colleague&quot;, null, [cCol], null);&#xd;
+&#xd;
+        if (dsCol == null || dsCol.rowsCount == 0) {&#xd;
+            return &quot;colleague nao encontrado para &quot; + usuarioId;&#xd;
+        }&#xd;
+&#xd;
+        var nomeUsuario = dsCol.getValue(0, &quot;colleagueName&quot;);&#xd;
+        if (nomeUsuario != null &amp;&amp; String(nomeUsuario) != &quot;&quot;) {&#xd;
+            form.setValue(&quot;gestorResponsavel&quot;, String(nomeUsuario));&#xd;
+        }&#xd;
+&#xd;
+        // A consulta ao RM é por CODUSUARIO (login) — neste tenant o&#xd;
+        // colleagueId é a matrícula (GUID), então resolve o login do&#xd;
+        // colleague; sem login cadastrado, cai pro colleagueId mesmo.&#xd;
+        var usuarioRM = loginDoColleague(dsCol, 0);&#xd;
+        if (usuarioRM == &quot;&quot;) usuarioRM = usuarioId;&#xd;
+        var cUsr = DatasetFactory.createConstraint(&#xd;
+            &quot;CODUSUARIO&quot;, usuarioRM, usuarioRM, ConstraintType.MUST&#xd;
+        );&#xd;
+        var ds = DatasetFactory.getDataset(&quot;ds_consulta_dpt_rm&quot;, null, [cUsr], null);&#xd;
+&#xd;
+        if (ds != null &amp;&amp; ds.rowsCount &gt; 0 &amp;&amp; String(ds.getValue(0, &quot;STATUS&quot;)) == &quot;OK&quot;) {&#xd;
+            form.setValue(&quot;departamento&quot;, String(ds.getValue(0, &quot;DESCRICAO&quot;)));&#xd;
+            form.setValue(&quot;gestorResponsavel&quot;, String(ds.getValue(0, &quot;NOME&quot;)));&#xd;
+            return &quot;departamento preenchido (&quot; + usuarioRM + &quot;)&quot;;&#xd;
+        }&#xd;
+&#xd;
+        var st = (ds != null &amp;&amp; ds.rowsCount &gt; 0) ? String(ds.getValue(0, &quot;STATUS&quot;)) : &quot;sem linhas&quot;;&#xd;
+        var ms = (ds != null &amp;&amp; ds.rowsCount &gt; 0) ? String(ds.getValue(0, &quot;MENSAGEM&quot;)) : &quot;&quot;;&#xd;
+        return &quot;DS_CONSULTA_DPT nao-OK para &quot; + usuarioRM + &quot; (status=&quot; + st + &quot; | &quot; + ms + &quot;)&quot;;&#xd;
+    } catch (e) {&#xd;
+        return &quot;EXCECAO: &quot; + e.message;&#xd;
+    }&#xd;
+}&#xd;
+&#xd;
+// Procura a coluna de login no dataset colleague (o nome varia por&#xd;
+// versão/tenant). O colleagueId neste tenant é a matrícula (GUID) —&#xd;
+// o CODUSUARIO do RM é o login.&#xd;
+function loginDoColleague(dsCol, row) {&#xd;
+    var colunas = dsCol.columnsName;&#xd;
+    if (colunas == null) return &quot;&quot;;&#xd;
+    for (var i = 0; i &lt; colunas.length; i++) {&#xd;
+        var nome = String(colunas[i]).toLowerCase();&#xd;
+        if (nome.indexOf(&quot;login&quot;) == -1 || nome.indexOf(&quot;colleagueid&quot;) != -1) continue;&#xd;
+        var v = dsCol.getValue(row, colunas[i]);&#xd;
+        if (v != null &amp;&amp; String(v).replace(/^\s+|\s+$/g, &quot;&quot;) != &quot;&quot;) return String(v).trim();&#xd;
+    }&#xd;
+    return &quot;&quot;;&#xd;
+}&#xd;
+&#xd;
+function jsonStr(s) {&#xd;
+    return &quot;\&quot;&quot; + String(s == null ? &quot;&quot; : s)&#xd;
+        .replace(/\\/g, &quot;\\\\&quot;).replace(/&quot;/g, &quot;\\\&quot;&quot;)&#xd;
+        .replace(/\r/g, &quot;\\r&quot;).replace(/\n/g, &quot;\\n&quot;) + &quot;\&quot;&quot;;&#xd;
+}&#xd;
+&#xd;
+var CAMPOS_SISTEMA = [&quot;nomeSistema&quot;, &quot;fornecedorSistema&quot;, &quot;quantidadeLicencas&quot;,&#xd;
+                      &quot;finalidadeSistema&quot;, &quot;tipoSistema&quot;, &quot;urlSistema&quot;, &quot;situacaoSistema&quot;,&#xd;
+                      &quot;moedaSistema&quot;, &quot;valorCobranca&quot;, &quot;frequenciaPagamento&quot;,&#xd;
+                      &quot;custoMensalEstimado&quot;, &quot;custoAnualEstimado&quot;,&#xd;
+                      &quot;responsavelContratacao&quot;, &quot;dataContratacao&quot;,&#xd;
+                      &quot;aprovacaoDeclarada&quot;, &quot;observacoesArea&quot;,&#xd;
+                      &quot;resultadoConferenciaTI&quot;, &quot;referenciaValidacaoTI&quot;,&#xd;
+                      &quot;encaminhamentoTI&quot;, &quot;parecerTI&quot;, &quot;parecerInterno&quot;];&#xd;
+&#xd;
+// Monta o JSON das linhas salvas (chaves = nomes base dos campos).&#xd;
+function sistemasJson(form) {&#xd;
+    var indexes = obterIndexesSistemas(form);&#xd;
+    var js = &quot;[&quot;;&#xd;
+    for (var i = 0; i &lt; indexes.length; i++) {&#xd;
+        if (i &gt; 0) js += &quot;,&quot;;&#xd;
+        js += &quot;{&quot;;&#xd;
+        for (var c = 0; c &lt; CAMPOS_SISTEMA.length; c++) {&#xd;
+            if (c &gt; 0) js += &quot;,&quot;;&#xd;
+            js += &quot;\&quot;&quot; + CAMPOS_SISTEMA[c] + &quot;\&quot;:&quot; + jsonStr(form.getValue(CAMPOS_SISTEMA[c] + indexes[i]));&#xd;
+        }&#xd;
+        js += &quot;}&quot;;&#xd;
+    }&#xd;
+    return js + &quot;]&quot;;&#xd;
+}&#xd;
+&#xd;
+function emitirSistemasSalvos(form, customHTML) {&#xd;
+    // A fonte primária é o próprio campo sistemasJson persistido (os campos&#xd;
+    // flat nomeSistemaN não são registrados e podem não sobreviver à gravação);&#xd;
+    // a varredura de campos flat só serve pra solicitações antigas sem o campo.&#xd;
+    var json = String(form.getValue(&quot;sistemasJson&quot;) || &quot;&quot;);&#xd;
+    if (json.replace(/^\s+|\s+$/g, &quot;&quot;) == &quot;&quot;) {&#xd;
+        json = sistemasJson(form);&#xd;
+        if (json != &quot;[]&quot;) form.setValue(&quot;sistemasJson&quot;, json);&#xd;
+    }&#xd;
+    customHTML.append(&quot;&lt;script&gt;window.__sistemasSalvos=&quot; + json + &quot;;&lt;/script&gt;&quot;);&#xd;
+}&#xd;
+&#xd;
+// getChildrenIndexes pode não enxergar a tabela dependendo do metadata&#xd;
+// publicado; nesse caso detecta as linhas varrendo os campos N recebidos.&#xd;
+function obterIndexesSistemas(form) {&#xd;
+    var idxFluig = form.getChildrenIndexes(&quot;tb_sistemas&quot;);&#xd;
+    var indexes = [];&#xd;
+    for (var k = 0; k &lt; idxFluig.length; k++) {&#xd;
+        indexes.push(idxFluig[k]);&#xd;
+    }&#xd;
+    if (indexes.length &gt; 0) return indexes;&#xd;
+&#xd;
+    var campos = [&quot;nomeSistema&quot;, &quot;fornecedorSistema&quot;, &quot;finalidadeSistema&quot;,&#xd;
+                  &quot;situacaoSistema&quot;, &quot;quantidadeLicencas&quot;, &quot;moedaSistema&quot;,&#xd;
+                  &quot;valorCobranca&quot;, &quot;frequenciaPagamento&quot;, &quot;aprovacaoDeclarada&quot;,&#xd;
+                  &quot;responsavelContratacao&quot;, &quot;dataContratacao&quot;,&#xd;
+                  &quot;tipoSistema&quot;, &quot;urlSistema&quot;, &quot;observacoesArea&quot;];&#xd;
+    for (var i = 1; i &lt;= 50; i++) {&#xd;
+        for (var c = 0; c &lt; campos.length; c++) {&#xd;
+            var v = form.getValue(campos[c] + i);&#xd;
+            if (v != null &amp;&amp; String(v).replace(/^\s+|\s+$/g, &quot;&quot;) != &quot;&quot;) {&#xd;
+                indexes.push(i);&#xd;
+                break;&#xd;
+            }&#xd;
+        }&#xd;
+    }&#xd;
+    return indexes;&#xd;
+}
+</eventDescription>
+      <managedScript>false</managedScript>
+    </WorkflowProcessEvent>
+  </list>
+  <list/>
+  <list>
+    <SwimLane>
+      <color>FFFFFF</color>
+      <height>290</height>
+      <width>831</width>
+      <positionX>10</positionX>
+      <positionY>10</positionY>
+      <stateName>Pool</stateName>
+      <type>1</type>
+      <parentSequence>0</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>1</sequence>
+      </swimLanePK>
+    </SwimLane>
+    <SwimLane>
+      <color>9F9F9F</color>
+      <height>145</height>
+      <width>801</width>
+      <positionX>40</positionX>
+      <positionY>10</positionY>
+      <stateName>Reporter</stateName>
+      <type>2</type>
+      <parentSequence>1</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>2</sequence>
+      </swimLanePK>
+    </SwimLane>
+    <SwimLane>
+      <color>C0C0C0</color>
+      <height>145</height>
+      <width>801</width>
+      <positionX>40</positionX>
+      <positionY>155</positionY>
+      <stateName>Assignee</stateName>
+      <type>2</type>
+      <parentSequence>1</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <sequence>3</sequence>
+      </swimLanePK>
+    </SwimLane>
+  </list>
+  <list>
+    <ProcessComponGraf>
+      <componType>1</componType>
+      <positionX>210</positionX>
+      <positionY>20</positionY>
+      <processComponGrafPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <componGrafSequence>7</componGrafSequence>
+      </processComponGrafPK>
+      <stateName>Início do Processo</stateName>
+    </ProcessComponGraf>
+  </list>
+  <list>
+    <ProcessLinkAssoc>
+      <processLinkAssocPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>1</version>
+        <linkSequence>8</linkSequence>
+      </processLinkAssocPK>
+      <initialStateSequence>7</initialStateSequence>
+      <finalStateSequence>4</finalStateSequence>
+    </ProcessLinkAssoc>
+  </list>
+  <list>
+    <ProcessLinkBend>
+      <processLinkBendPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>15</version>
+        <linkSequence>6</linkSequence>
+        <bendSequence>1</bendSequence>
+      </processLinkBendPK>
+      <positionX>167</positionX>
+      <positionY>235</positionY>
+    </ProcessLinkBend>
+    <ProcessLinkBend>
+      <processLinkBendPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>15</version>
+        <linkSequence>14</linkSequence>
+        <bendSequence>1</bendSequence>
+      </processLinkBendPK>
+      <positionX>482</positionX>
+      <positionY>170</positionY>
+    </ProcessLinkBend>
+    <ProcessLinkBend>
+      <processLinkBendPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>15</version>
+        <linkSequence>16</linkSequence>
+        <bendSequence>1</bendSequence>
+      </processLinkBendPK>
+      <positionX>406</positionX>
+      <positionY>171</positionY>
+    </ProcessLinkBend>
+    <ProcessLinkBend>
+      <processLinkBendPK>
+        <companyId>1</companyId>
+        <processId>levantamento_sistemas</processId>
+        <version>15</version>
+        <linkSequence>8</linkSequence>
+        <bendSequence>1</bendSequence>
+      </processLinkBendPK>
+      <positionX>167</positionX>
+      <positionY>48</positionY>
+    </ProcessLinkBend>
+  </list>
+  <list/>
+  <list/>
+  <list/>
+  <list/>
+  <list/>
+  <list/>
+  <list/>
+  <list/>
+</list>
