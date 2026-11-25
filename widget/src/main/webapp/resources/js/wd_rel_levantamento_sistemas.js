@@ -17,7 +17,7 @@ var RelLevSistemas = SuperWidget.extend({
     },
     COLS: ["processInstanceId", "dataLevantamento", "departamento",
         "gestorResponsavel", "nomeSistema", "urlSistema", "moedaSistema",
-        "valorCobranca", "frequenciaPagamento", "resultadoConferenciaTI",
+        "frequenciaPagamento", "valorCobranca", "resultadoConferenciaTI",
         "finalidadeSistema"],
 
     init: function () {
@@ -144,7 +144,7 @@ var RelLevSistemas = SuperWidget.extend({
                     $td.empty().append(
                         $("<a>").attr({ href: href, target: "_blank", rel: "noopener" }).text(v));
                 }
-                if (i === 7) $td.addClass("text-right");
+                if (col === "valorCobranca") $td.addClass("text-right");
                 $tr.append($td);
             });
             $tb.append($tr);
@@ -179,7 +179,7 @@ var RelLevSistemas = SuperWidget.extend({
         }
 
         var cab = ["Solicitação", "Data", "Área", "Gestor", "Sistema", "URL",
-            "Moeda", "Valor", "Frequência de pagamento", "Status parecer TI",
+            "Moeda", "Frequência de pagamento", "Valor", "Status parecer TI",
             "Finalidade"];
         var html = "<table border='1'><tr>";
         $.each(cab, function (_, c) { html += "<th>" + c + "</th>"; });
@@ -195,8 +195,8 @@ var RelLevSistemas = SuperWidget.extend({
                 "<td>" + esc(l.nomeSistema) + "</td>" +
                 "<td>" + esc(l.urlSistema) + "</td>" +
                 "<td>" + esc(l.moedaSistema) + "</td>" +
-                "<td>" + esc(self.valorFormatado(l)) + "</td>" +
                 "<td>" + esc(self.FREQ[l.frequenciaPagamento] || l.frequenciaPagamento || "") + "</td>" +
+                "<td>" + esc(self.valorFormatado(l)) + "</td>" +
                 "<td>" + esc(self.PARECER[l.resultadoConferenciaTI] || "Não conferido") + "</td>" +
                 "<td>" + esc(l.finalidadeSistema) + "</td>" +
                 "</tr>";

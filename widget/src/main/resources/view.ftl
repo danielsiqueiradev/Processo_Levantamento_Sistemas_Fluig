@@ -67,8 +67,8 @@
                             <th>Sistema</th>
                             <th>URL</th>
                             <th>Moeda</th>
-                            <th>Valor</th>
                             <th>Frequência</th>
+                            <th>Valor</th>
                             <th>Parecer TI</th>
                             <th>Finalidade</th>
                         </tr>
